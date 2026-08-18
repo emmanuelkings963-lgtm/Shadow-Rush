@@ -3,150 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0,user-scalable=no">
+
 <title>Shadow Rush</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  user-select: none;
-  -webkit-user-select: none;
+*{
+  box-sizing:border-box;
+  user-select:none;
+  -webkit-user-select:none;
 }
 
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #050510;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#03030a;
+  font-family:Arial,sans-serif;
+  color:white;
 }
 
-#gameCanvas {
-  display: block;
-  margin: auto;
-  background: #101020;
-  width: 100vw;
-  max-width: 500px;
-  height: 100vh;
+canvas{
+  display:block;
+  width:100%;
+  height:100%;
+  background:#050510;
 }
 
-#hud {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(94vw, 470px);
-  z-index: 5;
-  display: flex;
-  justify-content: space-between;
-  pointer-events: none;
+#hud{
+  position:fixed;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:94%;
+  max-width:500px;
+  display:flex;
+  justify-content:space-between;
+  z-index:5;
+  pointer-events:none;
 }
 
-.hudBox {
-  background: rgba(0,0,0,.7);
-  border: 2px solid #00eaff;
-  border-radius: 10px;
-  padding: 7px 10px;
-  text-shadow: 0 0 8px #00eaff;
+.hudBox{
+  padding:8px 11px;
+  border:2px solid #00eaff;
+  border-radius:10px;
+  background:rgba(0,0,0,.7);
+  color:#00eaff;
+  font-weight:bold;
+  text-shadow:0 0 8px #00eaff;
 }
 
-#menu {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  background: #050510;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-y: auto;
+#menu,
+#gameOver{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at center,
+    #101040 0%,
+    #050510 45%,
+    #010105 100%);
 }
 
-.menuBox,
-.gameOverBox {
-  width: 92%;
-  max-width: 420px;
-  padding: 25px;
-  border: 2px solid #00eaff;
-  border-radius: 20px;
-  background: #09091a;
-  box-shadow: 0 0 30px #0066ff;
+.box{
+  width:92%;
+  max-width:420px;
+  padding:25px;
+  border:2px solid #00eaff;
+  border-radius:20px;
+  background:rgba(7,7,20,.95);
+  box-shadow:
+    0 0 30px #0066ff,
+    inset 0 0 20px rgba(0,170,255,.15);
+  text-align:center;
 }
 
-h1 {
-  color: #00eaff;
-  text-shadow: 0 0 18px #00aaff;
+h1{
+  color:#00eaff;
+  text-shadow:0 0 18px #008cff;
 }
 
-button {
-  padding: 13px 20px;
-  margin: 7px;
-  border: 2px solid #00aaff;
-  border-radius: 10px;
-  background: #080820;
-  color: #00eaff;
-  font-weight: bold;
-  font-size: 15px;
+h2{
+  color:#b9f8ff;
 }
 
-button:active {
-  transform: scale(.95);
+button{
+  padding:12px 18px;
+  margin:6px;
+  border:2px solid #00aaff;
+  border-radius:10px;
+  background:#07071b;
+  color:#00eaff;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
 }
 
-.option {
-  background: #11112a;
-  border: 1px solid #333366;
-  border-radius: 12px;
-  padding: 10px;
-  margin: 8px 0;
+button:active{
+  transform:scale(.94);
 }
 
-.selected {
-  border-color: #00eaff;
-  box-shadow: 0 0 12px #0066ff;
+.choice{
+  border:1px solid #30305a;
+  border-radius:12px;
+  padding:10px;
+  margin:10px 0;
 }
 
-.hidden {
-  display: none !important;
+.selected{
+  border-color:#00eaff;
+  box-shadow:0 0 15px #0066ff;
 }
 
-#controls {
-  position: fixed;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
-  width: min(95vw, 450px);
-  display: flex;
-  justify-content: space-between;
+#controls{
+  position:fixed;
+  bottom:15px;
+  left:50%;
+  transform:translateX(-50%);
+  width:94%;
+  max-width:500px;
+  display:flex;
+  justify-content:space-between;
+  z-index:8;
+  pointer-events:none;
 }
 
-.controlButton {
-  width: 70px;
-  height: 55px;
-  font-size: 22px;
-  background: rgba(0,0,0,.65);
+.control{
+  width:72px;
+  height:58px;
+  margin:0;
+  font-size:25px;
+  background:rgba(0,0,0,.65);
+  pointer-events:auto;
 }
 
-#gameOver {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: rgba(0,0,0,.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+#jumpButton{
+  width:82px;
 }
 
-.gameOverBox {
-  border-color: #ff3355;
+.hidden{
+  display:none!important;
 }
 
-.smallText {
-  color: #aaa;
-  font-size: 13px;
+#gameOver{
+  background:rgba(0,0,0,.88);
+}
+
+#gameOver h1{
+  color:#ff3355;
+  text-shadow:0 0 15px #ff0033;
+}
+
+.small{
+  color:#aaa;
+  font-size:13px;
 }
 </style>
 </head>
@@ -173,96 +188,86 @@ button:active {
 </div>
 
 
-<!-- MENU -->
+<!-- MAIN MENU -->
 <div id="menu">
 
-  <div class="menuBox">
+  <div class="box">
 
-    <h1>🏃 SHADOW RUSH</h1>
-
-    <p>⚔️ THE ENDLESS RUN BEGINS</p>
+    <h1>🌑 SHADOW RUSH</h1>
 
     <p>
-      🪙 Coins:
+      🏃 THE ENDLESS RUN BEGINS
+    </p>
+
+    <p>
+      Coins:
       <strong id="menuCoins">0</strong>
     </p>
 
     <p>
-      🏆 Best Score:
-      <strong id="bestScore">0</strong>
+      Best Score:
+      <strong id="menuBest">0</strong>
     </p>
 
-    <div class="option">
+    <div class="choice">
 
       <strong>🧑 CHARACTER</strong>
 
       <br>
 
       <button
-        id="rookieButton"
-        onclick="chooseCharacter('rookie')">
+        id="rookieBtn"
+        onclick="selectCharacter('rookie')">
         Rookie
       </button>
 
       <button
-        id="blazeButton"
-        onclick="chooseCharacter('blaze')">
+        id="blazeBtn"
+        onclick="selectCharacter('blaze')">
         Blaze
       </button>
 
       <button
-        id="shadowButton"
-        onclick="chooseCharacter('shadow')">
+        id="shadowBtn"
+        onclick="selectCharacter('shadow')">
         Shadow
       </button>
 
     </div>
 
 
-    <div class="option">
+    <div class="choice">
 
-      <strong>🛼 SKATES</strong>
+      <strong>🛼 MOVEMENT</strong>
 
       <br>
 
       <button
-        id="basicSkatesButton"
-        onclick="chooseSkates('basic')">
-        Basic
+        id="footBtn"
+        onclick="selectMovement('foot')">
+        🏃 Foot
       </button>
 
       <button
-        id="speedSkatesButton"
-        onclick="chooseSkates('speed')">
-        Speed
-      </button>
-
-      <button
-        id="shadowSkatesButton"
-        onclick="chooseSkates('shadow')">
-        Shadow
+        id="skateBtn"
+        onclick="selectMovement('skate')">
+        🛼 Skates
       </button>
 
     </div>
 
 
     <p id="selectionText">
-      🧑 Rookie + 🛼 Basic
+      🧑 Rookie + 🏃 Foot
     </p>
-
 
     <button onclick="startGame()">
       ▶️ START RUN
     </button>
 
-
-    <button onclick="resetSave()">
-      🗑️ RESET SAVE
-    </button>
-
-
-    <p class="smallText">
-      Swipe or use the buttons to move.
+    <p class="small">
+      Swipe left/right to change lanes.<br>
+      Swipe up to jump.
     </p>
 
   </div>
@@ -271,22 +276,23 @@ button:active {
 
 
 <!-- CONTROLS -->
-<div id="controls" class="hidden">
+<div id="controls">
 
   <button
-    class="controlButton"
+    class="control"
     onclick="moveLeft()">
     ◀
   </button>
 
   <button
-    class="controlButton"
+    id="jumpButton"
+    class="control"
     onclick="jump()">
     ⬆
   </button>
 
   <button
-    class="controlButton"
+    class="control"
     onclick="moveRight()">
     ▶
   </button>
@@ -297,30 +303,30 @@ button:active {
 <!-- GAME OVER -->
 <div id="gameOver" class="hidden">
 
-  <div class="gameOverBox">
+  <div class="box">
 
     <h1>💀 RUN OVER</h1>
 
-    <h2>
-      🏆 Score:
-      <span id="finalScore">0</span>
-    </h2>
-
     <p>
-      🪙 Coins:
-      <span id="finalCoins">0</span>
+      Score:
+      <strong id="finalScore">0</strong>
     </p>
 
     <p>
-      🏆 Best:
-      <span id="finalBest">0</span>
+      Coins:
+      <strong id="finalCoins">0</strong>
     </p>
 
-    <button onclick="startGame()">
+    <p>
+      Best Score:
+      <strong id="finalBest">0</strong>
+    </p>
+
+    <button onclick="restartGame()">
       🔄 RUN AGAIN
     </button>
 
-    <button onclick="returnToMenu()">
+    <button onclick="returnMenu()">
       🏠 MENU
     </button>
 
@@ -332,15 +338,6 @@ button:active {
 <script>
 
 /* =====================================================
-   SHADOW RUSH
-   PERMANENT SAVE
-===================================================== */
-
-const SAVE_KEY =
-  "shadowRushPermanentSave_v1";
-
-
-/* =====================================================
    CANVAS
 ===================================================== */
 
@@ -350,454 +347,353 @@ const canvas =
 const ctx =
   canvas.getContext("2d");
 
+let W = 0;
+let H = 0;
 
-function resizeCanvas() {
+function resizeCanvas(){
 
-  canvas.width =
+  const dpr =
     Math.min(
-      window.innerWidth,
-      500
+      window.devicePixelRatio || 1,
+      2
     );
 
+  W = window.innerWidth;
+  H = window.innerHeight;
+
+  canvas.width =
+    W * dpr;
+
   canvas.height =
-    window.innerHeight;
+    H * dpr;
 
+  canvas.style.width =
+    W + "px";
+
+  canvas.style.height =
+    H + "px";
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
 }
-
-resizeCanvas();
 
 window.addEventListener(
   "resize",
   resizeCanvas
 );
 
+resizeCanvas();
+
 
 /* =====================================================
-   GAME SAVE
+   SAVE
 ===================================================== */
 
-let saveData = {
+const SAVE_KEY =
+  "shadowRushSave_v1";
 
-  coins: 0,
+let save = {
 
-  bestScore: 0,
+  coins:0,
 
-  selectedCharacter: "rookie",
-
-  selectedSkates: "basic",
-
-  unlockedCharacters: [
-    "rookie"
-  ],
-
-  unlockedSkates: [
-    "basic"
-  ]
+  bestScore:0
 
 };
 
+try{
 
-function saveGame() {
-
-  localStorage.setItem(
-    SAVE_KEY,
-    JSON.stringify(saveData)
-  );
-
-}
-
-
-function loadGame() {
-
-  const saved =
+  const stored =
     localStorage.getItem(
       SAVE_KEY
     );
 
-  if (!saved) {
-    return;
+  if(stored){
+
+    save =
+      {
+        ...save,
+        ...JSON.parse(stored)
+      };
+
   }
 
-  try {
+}catch(e){
 
-    saveData = {
-      ...saveData,
-      ...JSON.parse(saved)
-    };
+  console.log(e);
 
-  } catch(error) {
+}
 
-    console.log(
-      "Save loading failed."
+
+function saveGame(){
+
+  try{
+
+    localStorage.setItem(
+      SAVE_KEY,
+      JSON.stringify(save)
     );
+
+  }catch(e){
+
+    console.log(e);
 
   }
 
 }
 
 
-function resetSave() {
+/* =====================================================
+   PLAYER SETTINGS
+===================================================== */
 
-  const confirmReset =
-    confirm(
-      "Reset all Shadow Rush progress?"
-    );
+let selectedCharacter =
+  "rookie";
 
-  if (!confirmReset) {
-    return;
-  }
+let movement =
+  "foot";
 
-  localStorage.removeItem(
-    SAVE_KEY
-  );
 
-  location.reload();
+function selectCharacter(type){
+
+  selectedCharacter =
+    type;
+
+  updateSelection();
 
 }
 
 
-/* =====================================================
-   GAME VARIABLES
-===================================================== */
+function selectMovement(type){
 
-let running = false;
+  movement =
+    type;
 
-let animationID = null;
-
-let score = 0;
-
-let runCoins = 0;
-
-let speed = 1;
-
-let distance = 0;
-
-let spawnTimer = 0;
-
-let coinTimer = 0;
-
-let obstacles = [];
-
-let coins = [];
-
-let player = {
-
-  lane: 1,
-
-  x: 0,
-
-  y: 0,
-
-  width: 42,
-
-  height: 62,
-
-  jumping: false,
-
-  jumpVelocity: 0,
-
-  jumpY: 0
-
-};
-
-
-/* =====================================================
-   CHARACTER DATA
-===================================================== */
-
-const characters = {
-
-  rookie: {
-
-    name: "Rookie",
-
-    emoji: "🧑",
-
-    color: "#00eaff",
-
-    speedBonus: 0
-
-  },
-
-  blaze: {
-
-    name: "Blaze",
-
-    emoji: "🔥",
-
-    color: "#ff6633",
-
-    speedBonus: 0.15
-
-  },
-
-  shadow: {
-
-    name: "Shadow",
-
-    emoji: "👤",
-
-    color: "#aa55ff",
-
-    speedBonus: 0.30
-
-  }
-
-};
-
-
-/* =====================================================
-   SKATE DATA
-===================================================== */
-
-const skates = {
-
-  basic: {
-
-    name: "Basic",
-
-    emoji: "🛼",
-
-    speedBonus: 0
-
-  },
-
-  speed: {
-
-    name: "Speed",
-
-    emoji: "⚡",
-
-    speedBonus: 0.20
-
-  },
-
-  shadow: {
-
-    name: "Shadow",
-
-    emoji: "🌑",
-
-    speedBonus: 0.40
-
-  }
-
-};
-
-
-/* =====================================================
-   LOAD
-===================================================== */
-
-loadGame();
-
-
-/* =====================================================
-   CHARACTER SELECTION
-===================================================== */
-
-function chooseCharacter(name) {
-
-  if (
-    !saveData.unlockedCharacters
-      .includes(name)
-  ) {
-
-    alert(
-      "🔒 Character locked!"
-    );
-
-    return;
-
-  }
-
-  saveData.selectedCharacter =
-    name;
-
-  saveGame();
-
-  updateMenu();
+  updateSelection();
 
 }
 
 
-/* =====================================================
-   SKATE SELECTION
-===================================================== */
+function updateSelection(){
 
-function chooseSkates(name) {
-
-  if (
-    !saveData.unlockedSkates
-      .includes(name)
-  ) {
-
-    alert(
-      "🔒 Skates locked!"
+  document
+    .querySelectorAll(".choice button")
+    .forEach(
+      button =>
+        button.classList.remove(
+          "selected"
+        )
     );
 
-    return;
+  document
+    .getElementById(
+      selectedCharacter + "Btn"
+    )
+    .classList.add(
+      "selected"
+    );
 
-  }
-
-  saveData.selectedSkates =
-    name;
-
-  saveGame();
-
-  updateMenu();
-
-}
-
-
-/* =====================================================
-   MENU
-===================================================== */
-
-function updateMenu() {
-
-  document.getElementById(
-    "menuCoins"
-  ).innerText =
-    saveData.coins;
-
-  document.getElementById(
-    "bestScore"
-  ).innerText =
-    Math.floor(
-      saveData.bestScore
+  document
+    .getElementById(
+      movement === "foot"
+        ? "footBtn"
+        : "skateBtn"
+    )
+    .classList.add(
+      "selected"
     );
 
 
-  const character =
-    characters[
-      saveData.selectedCharacter
-    ];
+  const names = {
 
-  const skate =
-    skates[
-      saveData.selectedSkates
-    ];
+    rookie:"Rookie",
 
+    blaze:"Blaze",
+
+    shadow:"Shadow"
+
+  };
 
   document.getElementById(
     "selectionText"
   ).innerText =
 
     "🧑 " +
-    character.name +
+    names[selectedCharacter] +
 
     " + " +
 
-    skate.emoji +
-    " " +
-    skate.name;
-
-
-  document
-    .getElementById(
-      "rookieButton"
-    )
-    .classList.toggle(
-      "selected",
-      saveData.selectedCharacter ===
-      "rookie"
-    );
-
-
-  document
-    .getElementById(
-      "blazeButton"
-    )
-    .classList.toggle(
-      "selected",
-      saveData.selectedCharacter ===
-      "blaze"
-    );
-
-
-  document
-    .getElementById(
-      "shadowButton"
-    )
-    .classList.toggle(
-      "selected",
-      saveData.selectedCharacter ===
-      "shadow"
-    );
-
-
-  document
-    .getElementById(
-      "basicSkatesButton"
-    )
-    .classList.toggle(
-      "selected",
-      saveData.selectedSkates ===
-      "basic"
-    );
-
-
-  document
-    .getElementById(
-      "speedSkatesButton"
-    )
-    .classList.toggle(
-      "selected",
-      saveData.selectedSkates ===
-      "speed"
-    );
-
-
-  document
-    .getElementById(
-      "shadowSkatesButton"
-    )
-    .classList.toggle(
-      "selected",
-      saveData.selectedSkates ===
-      "shadow"
+    (
+      movement === "foot"
+        ? "🏃 Foot"
+        : "🛼 Skates"
     );
 
 }
 
 
+updateSelection();
+
+
 /* =====================================================
-   START GAME
+   GAME STATE
 ===================================================== */
 
-function startGame() {
+let running =
+  false;
 
-  document
-    .getElementById(
-      "menu"
-    )
-    .classList.add(
-      "hidden"
+let gameOver =
+  false;
+
+let animationId =
+  null;
+
+let score =
+  0;
+
+let runCoins =
+  0;
+
+let speed =
+  7;
+
+let distance =
+  0;
+
+let spawnTimer =
+  0;
+
+let coinTimer =
+  0;
+
+let roadOffset =
+  0;
+
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
+const player = {
+
+  lane:1,
+
+  targetLane:1,
+
+  x:0,
+
+  y:0,
+
+  width:42,
+
+  height:70,
+
+  jumpY:0,
+
+  jumpVelocity:0,
+
+  grounded:true,
+
+  laneMoveSpeed:0.25
+
+};
+
+
+/* =====================================================
+   OBJECTS
+===================================================== */
+
+let obstacles = [];
+
+let coins = [];
+
+
+/* =====================================================
+   ROAD
+===================================================== */
+
+function roadTop(){
+
+  return H * 0.38;
+
+}
+
+function roadBottom(){
+
+  return H;
+
+}
+
+function laneX(
+  lane,
+  y
+){
+
+  const topWidth =
+    Math.min(
+      W * .55,
+      330
     );
 
-
-  document
-    .getElementById(
-      "gameOver"
-    )
-    .classList.add(
-      "hidden"
+  const bottomWidth =
+    Math.min(
+      W * .95,
+      560
     );
 
-
-  document
-    .getElementById(
-      "controls"
-    )
-    .classList.remove(
-      "hidden"
+  const t =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        (y - roadTop()) /
+        (H - roadTop())
+      )
     );
 
+  const width =
+    topWidth +
+    (bottomWidth-topWidth)*t;
+
+  const left =
+    (W-width)/2;
+
+  return (
+    left +
+    width *
+    ((lane + .5)/3)
+  );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+function startGame(){
+
+  document
+    .getElementById("menu")
+    .classList.add("hidden");
+
+  document
+    .getElementById("gameOver")
+    .classList.add("hidden");
 
   score = 0;
 
   runCoins = 0;
+
+  speed =
+    movement === "skate"
+      ? 8
+      : 7;
 
   distance = 0;
 
@@ -805,38 +701,53 @@ function startGame() {
 
   coinTimer = 0;
 
+  roadOffset = 0;
+
   obstacles = [];
 
   coins = [];
 
-  speed = 1;
-
-
   player.lane = 1;
 
-  player.jumping = false;
-
-  player.jumpVelocity = 0;
+  player.targetLane = 1;
 
   player.jumpY = 0;
 
+  player.jumpVelocity = 0;
+
+  player.grounded = true;
+
+  player.x =
+    laneX(
+      1,
+      H*.78
+    );
 
   running = true;
 
+  gameOver = false;
 
   updateHUD();
 
+  cancelAnimationFrame(
+    animationId
+  );
 
-  if (animationID) {
-
-    cancelAnimationFrame(
-      animationID
+  animationId =
+    requestAnimationFrame(
+      gameLoop
     );
 
-  }
+}
 
 
-  gameLoop();
+/* =====================================================
+   RESTART
+===================================================== */
+
+function restartGame(){
+
+  startGame();
 
 }
 
@@ -845,36 +756,19 @@ function startGame() {
    RETURN MENU
 ===================================================== */
 
-function returnToMenu() {
+function returnMenu(){
 
   running = false;
 
-  document
-    .getElementById(
-      "gameOver"
-    )
-    .classList.add(
-      "hidden"
-    );
-
+  gameOver = false;
 
   document
-    .getElementById(
-      "controls"
-    )
-    .classList.add(
-      "hidden"
-    );
-
+    .getElementById("gameOver")
+    .classList.add("hidden");
 
   document
-    .getElementById(
-      "menu"
-    )
-    .classList.remove(
-      "hidden"
-    );
-
+    .getElementById("menu")
+    .classList.remove("hidden");
 
   updateMenu();
 
@@ -882,66 +776,33 @@ function returnToMenu() {
 
 
 /* =====================================================
-   LANE POSITION
+   LANE MOVEMENT
 ===================================================== */
 
-function getLaneX(lane) {
+function moveLeft(){
 
-  const center =
-    canvas.width / 2;
+  if(!running) return;
 
-  const spacing =
-    Math.min(
-      canvas.width * 0.25,
-      110
-    );
+  if(
+    player.targetLane > 0
+  ){
 
-
-  return (
-    center +
-    (lane - 1) *
-    spacing
-  );
-
-}
-
-
-/* =====================================================
-   MOVE LEFT
-===================================================== */
-
-function moveLeft() {
-
-  if (!running) {
-    return;
-  }
-
-  if (
-    player.lane > 0
-  ) {
-
-    player.lane--;
+    player.targetLane--;
 
   }
 
 }
 
 
-/* =====================================================
-   MOVE RIGHT
-===================================================== */
+function moveRight(){
 
-function moveRight() {
+  if(!running) return;
 
-  if (!running) {
-    return;
-  }
+  if(
+    player.targetLane < 2
+  ){
 
-  if (
-    player.lane < 2
-  ) {
-
-    player.lane++;
+    player.targetLane++;
 
   }
 
@@ -952,55 +813,121 @@ function moveRight() {
    JUMP
 ===================================================== */
 
-function jump() {
+function jump(){
 
-  if (!running) {
+  if(
+    !running ||
+    !player.grounded
+  ){
+
     return;
+
   }
 
-  if (
-    player.jumping
-  ) {
-    return;
-  }
-
-  player.jumping =
-    true;
+  player.grounded =
+    false;
 
   player.jumpVelocity =
-    15;
+    movement === "skate"
+      ? 17
+      : 16;
 
 }
 
 
 /* =====================================================
-   KEYBOARD
+   INPUT
 ===================================================== */
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+canvas.addEventListener(
+  "touchstart",
+  function(e){
+
+    const touch =
+      e.touches[0];
+
+    touchStartX =
+      touch.clientX;
+
+    touchStartY =
+      touch.clientY;
+
+  },
+  {passive:true}
+);
+
+
+canvas.addEventListener(
+  "touchend",
+  function(e){
+
+    if(!running) return;
+
+    const touch =
+      e.changedTouches[0];
+
+    const dx =
+      touch.clientX -
+      touchStartX;
+
+    const dy =
+      touch.clientY -
+      touchStartY;
+
+    const minSwipe =
+      35;
+
+    if(
+      Math.abs(dx) >
+      Math.abs(dy)
+    ){
+
+      if(
+        Math.abs(dx) >
+        minSwipe
+      ){
+
+        if(dx > 0)
+          moveRight();
+        else
+          moveLeft();
+
+      }
+
+    }else{
+
+      if(
+        dy < -minSwipe
+      ){
+
+        jump();
+
+      }
+
+    }
+
+  },
+  {passive:true}
+);
+
 
 document.addEventListener(
   "keydown",
-  function(event) {
+  function(e){
 
-    if (
-      event.key === "ArrowLeft"
-    ) {
-
+    if(e.key === "ArrowLeft")
       moveLeft();
 
-    }
-
-    else if (
-      event.key === "ArrowRight"
-    ) {
-
+    if(e.key === "ArrowRight")
       moveRight();
 
-    }
-
-    else if (
-      event.key === "ArrowUp" ||
-      event.key === " "
-    ) {
+    if(
+      e.key === "ArrowUp" ||
+      e.key === " "
+    ){
 
       jump();
 
@@ -1011,116 +938,26 @@ document.addEventListener(
 
 
 /* =====================================================
-   TOUCH SWIPE
-===================================================== */
-
-let touchStartX = 0;
-
-let touchStartY = 0;
-
-
-document.addEventListener(
-  "touchstart",
-  function(event) {
-
-    const touch =
-      event.changedTouches[0];
-
-    touchStartX =
-      touch.screenX;
-
-    touchStartY =
-      touch.screenY;
-
-  },
-  {passive: true}
-);
-
-
-document.addEventListener(
-  "touchend",
-  function(event) {
-
-    if (!running) {
-      return;
-    }
-
-    const touch =
-      event.changedTouches[0];
-
-    const dx =
-      touch.screenX -
-      touchStartX;
-
-    const dy =
-      touch.screenY -
-      touchStartY;
-
-
-    if (
-      Math.abs(dx) >
-      Math.abs(dy)
-    ) {
-
-      if (
-        Math.abs(dx) > 30
-      ) {
-
-        if (dx > 0) {
-
-          moveRight();
-
-        } else {
-
-          moveLeft();
-
-        }
-
-      }
-
-    } else {
-
-      if (
-        dy < -30
-      ) {
-
-        jump();
-
-      }
-
-    }
-
-  },
-  {passive: true}
-);
-
-
-/* =====================================================
    SPAWN OBSTACLE
 ===================================================== */
 
-function spawnObstacle() {
+function spawnObstacle(){
 
   const lane =
     Math.floor(
-      Math.random() * 3
+      Math.random()*3
     );
-
 
   obstacles.push({
 
-    lane: lane,
+    lane:lane,
 
-    y: -80,
-
-    width: 55,
-
-    height: 55,
+    z:0,
 
     type:
-      Math.random() < 0.5
-      ? "barrier"
-      : "monster"
+      Math.random() < .5
+        ? "barrier"
+        : "block"
 
   });
 
@@ -1128,462 +965,36 @@ function spawnObstacle() {
 
 
 /* =====================================================
-   SPAWN COIN
+   SPAWN COINS
 ===================================================== */
 
-function spawnCoin() {
+function spawnCoinLine(){
 
   const lane =
     Math.floor(
-      Math.random() * 3
+      Math.random()*3
     );
 
-
-  coins.push({
-
-    lane: lane,
-
-    y: -30,
-
-    radius: 13
-
-  });
-
-}
-
-
-/* =====================================================
-   UPDATE PLAYER
-===================================================== */
-
-function updatePlayer() {
-
-  if (
-    player.jumping
-  ) {
-
-    player.jumpY +=
-      player.jumpVelocity;
-
-    player.jumpVelocity -=
-      0.8;
-
-
-    if (
-      player.jumpY <= 0
-    ) {
-
-      player.jumpY = 0;
-
-      player.jumping =
-        false;
-
-      player.jumpVelocity =
-        0;
-
-    }
-
-  }
-
-}
-
-
-/* =====================================================
-   UPDATE OBSTACLES
-===================================================== */
-
-function updateObstacles() {
-
-  for (
-    let i = obstacles.length - 1;
-    i >= 0;
-    i--
-  ) {
-
-    const obstacle =
-      obstacles[i];
-
-
-    obstacle.y +=
-      7 * speed;
-
-
-    if (
-      checkObstacleCollision(
-        obstacle
-      )
-    ) {
-
-      endGame();
-
-      return;
-
-    }
-
-
-    if (
-      obstacle.y >
-      canvas.height + 100
-    ) {
-
-      obstacles.splice(
-        i,
-        1
-      );
-
-    }
-
-  }
-
-}
-
-
-/* =====================================================
-   UPDATE COINS
-===================================================== */
-
-function updateCoins() {
-
-  for (
-    let i = coins.length - 1;
-    i >= 0;
-    i--
-  ) {
-
-    const coin =
-      coins[i];
-
-
-    coin.y +=
-      7 * speed;
-
-
-    if (
-      checkCoinCollision(
-        coin
-      )
-    ) {
-
-      runCoins++;
-
-      coins.splice(
-        i,
-        1
-      );
-
-      continue;
-
-    }
-
-
-    if (
-      coin.y >
-      canvas.height + 50
-    ) {
-
-      coins.splice(
-        i,
-        1
-      );
-
-    }
-
-  }
-
-}
-
-
-/* =====================================================
-   OBSTACLE COLLISION
-===================================================== */
-
-function checkObstacleCollision(
-  obstacle
-) {
-
-  const playerX =
-    getLaneX(
-      player.lane
+  const amount =
+    4 +
+    Math.floor(
+      Math.random()*4
     );
 
-
-  const playerY =
-    canvas.height - 150 -
-    player.jumpY;
-
-
-  const obstacleX =
-    getLaneX(
-      obstacle.lane
-    );
-
-
-  const verticalDistance =
-    Math.abs(
-      obstacle.y -
-      playerY
-    );
-
-
-  const horizontalDistance =
-    Math.abs(
-      obstacleX -
-      playerX
-    );
-
-
-  /*
-    Jumping high enough
-    allows the player to
-    clear the obstacle.
-  */
-
-  if (
-    player.jumpY > 55
-  ) {
-
-    return false;
-
-  }
-
-
-  return (
-    horizontalDistance <
-      45 &&
-
-    verticalDistance <
-      55
-  );
-
-}
-
-
-/* =====================================================
-   COIN COLLISION
-===================================================== */
-
-function checkCoinCollision(
-  coin
-) {
-
-  const playerX =
-    getLaneX(
-      player.lane
-    );
-
-
-  const playerY =
-    canvas.height - 150 -
-    player.jumpY;
-
-
-  const coinX =
-    getLaneX(
-      coin.lane
-    );
-
-
-  const distanceX =
-    Math.abs(
-      coinX -
-      playerX
-    );
-
-
-  const distanceY =
-    Math.abs(
-      coin.y -
-      playerY
-    );
-
-
-  return (
-    distanceX < 45 &&
-    distanceY < 55
-  );
-
-}
-
-
-/* =====================================================
-   DRAW ROAD
-===================================================== */
-
-function drawRoad() {
-
-  const w =
-    canvas.width;
-
-  const h =
-    canvas.height;
-
-
-  ctx.fillStyle =
-    "#090914";
-
-  ctx.fillRect(
-    0,
-    0,
-    w,
-    h
-  );
-
-
-  /*
-    Road
-  */
-
-  const roadWidth =
-    Math.min(
-      w * 0.85,
-      430
-    );
-
-
-  const roadLeft =
-    (w - roadWidth) / 2;
-
-
-  ctx.fillStyle =
-    "#171725";
-
-  ctx.fillRect(
-    roadLeft,
-    0,
-    roadWidth,
-    h
-  );
-
-
-  /*
-    Road edges
-  */
-
-  ctx.strokeStyle =
-    "#00aaff";
-
-  ctx.lineWidth =
-    4;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    roadLeft,
-    0
-  );
-
-  ctx.lineTo(
-    roadLeft,
-    h
-  );
-
-  ctx.stroke();
-
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    roadLeft + roadWidth,
-    0
-  );
-
-  ctx.lineTo(
-    roadLeft + roadWidth,
-    h
-  );
-
-  ctx.stroke();
-
-
-  /*
-    Lane lines
-  */
-
-  const spacing =
-    roadWidth / 3;
-
-
-  ctx.strokeStyle =
-    "#555577";
-
-  ctx.lineWidth =
-    3;
-
-
-  for (
-    let i = 1;
-    i < 3;
+  for(
+    let i=0;
+    i<amount;
     i++
-  ) {
+  ){
 
-    const x =
-      roadLeft +
-      spacing * i;
+    coins.push({
 
+      lane:lane,
 
-    const offset =
-      (distance % 70);
+      z:
+        -i * 75
 
-
-    for (
-      let y = -70 + offset;
-      y < h;
-      y += 70
-    ) {
-
-      ctx.beginPath();
-
-      ctx.moveTo(
-        x,
-        y
-      );
-
-      ctx.lineTo(
-        x,
-        y + 35
-      );
-
-      ctx.stroke();
-
-    }
-
-  }
-
-
-  /*
-    Background buildings
-  */
-
-  ctx.fillStyle =
-    "#08080f";
-
-
-  for (
-    let i = 0;
-    i < 8;
-    i++
-  ) {
-
-    const buildingWidth =
-      35 + (i % 3) * 15;
-
-
-    const buildingHeight =
-      100 + (i % 4) * 40;
-
-
-    const x =
-      i % 2 === 0
-      ? i * 35
-      : w - i * 35 - buildingWidth;
-
-
-    ctx.fillRect(
-      x,
-      h - buildingHeight,
-      buildingWidth,
-      buildingHeight
-    );
+    });
 
   }
 
@@ -1591,323 +1002,136 @@ function drawRoad() {
 
 
 /* =====================================================
-   DRAW PLAYER
+   GAME LOOP
 ===================================================== */
 
-function drawPlayer() {
+let lastTime = 0;
 
-  const character =
-    characters[
-      saveData.selectedCharacter
-    ];
+function gameLoop(time){
 
-
-  const x =
-    getLaneX(
-      player.lane
-    );
-
-
-  const y =
-    canvas.height -
-    150 -
-    player.jumpY;
-
-
-  /*
-    Shadow underneath
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    x,
-    canvas.height - 83,
-    25,
-    8,
-    0,
-    0,
-    Math.PI * 2
-  );
-
-  ctx.fillStyle =
-    "rgba(0,0,0,.5)";
-
-  ctx.fill();
-
-
-  /*
-    Glow
-  */
-
-  ctx.shadowBlur =
-    20;
-
-  ctx.shadowColor =
-    character.color;
-
-
-  ctx.font =
-    "48px Arial";
-
-  ctx.textAlign =
-    "center";
-
-  ctx.fillStyle =
-    character.color;
-
-
-  ctx.fillText(
-    character.emoji,
-    x,
-    y + 50
-  );
-
-
-  ctx.shadowBlur =
-    0;
-
-
-  /*
-    Skates
-  */
-
-  const skate =
-    skates[
-      saveData.selectedSkates
-    ];
-
-
-  ctx.font =
-    "22px Arial";
-
-  ctx.fillText(
-    skate.emoji,
-    x,
-    y + 75
-  );
-
-}
-
-
-/* =====================================================
-   DRAW OBSTACLES
-===================================================== */
-
-function drawObstacles() {
-
-  obstacles.forEach(
-    obstacle => {
-
-      const x =
-        getLaneX(
-          obstacle.lane
-        );
-
-
-      ctx.textAlign =
-        "center";
-
-
-      ctx.shadowBlur =
-        15;
-
-      ctx.shadowColor =
-        "#ff3355";
-
-
-      ctx.font =
-        "45px Arial";
-
-
-      if (
-        obstacle.type ===
-        "barrier"
-      ) {
-
-        ctx.fillText(
-          "🚧",
-          x,
-          obstacle.y
-        );
-
-      } else {
-
-        ctx.fillText(
-          "👹",
-          x,
-          obstacle.y
-        );
-
-      }
-
-
-      ctx.shadowBlur =
-        0;
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   DRAW COINS
-===================================================== */
-
-function drawCoins() {
-
-  coins.forEach(
-    coin => {
-
-      const x =
-        getLaneX(
-          coin.lane
-        );
-
-
-      ctx.beginPath();
-
-      ctx.arc(
-        x,
-        coin.y,
-        coin.radius,
-        0,
-        Math.PI * 2
-      );
-
-
-      ctx.fillStyle =
-        "#ffd700";
-
-
-      ctx.shadowBlur =
-        15;
-
-      ctx.shadowColor =
-        "#ffd700";
-
-
-      ctx.fill();
-
-
-      ctx.shadowBlur =
-        0;
-
-
-      ctx.font =
-        "14px Arial";
-
-      ctx.fillStyle =
-        "#111";
-
-      ctx.textAlign =
-        "center";
-
-      ctx.fillText(
-        "$",
-        x,
-        coin.y + 5
-      );
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   DRAW
-===================================================== */
-
-function draw() {
-
-  ctx.clearRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-
-  drawRoad();
-
-  drawCoins();
-
-  drawObstacles();
-
-  drawPlayer();
-
-}
-
-
-/* =====================================================
-   UPDATE GAME
-===================================================== */
-
-function updateGame() {
-
-  if (!running) {
+  if(!running)
     return;
-  }
 
+  const delta =
+    Math.min(
+      (time-lastTime)/16.67,
+      2
+    );
+
+  lastTime =
+    time;
+
+  update(delta);
+
+  draw();
+
+  animationId =
+    requestAnimationFrame(
+      gameLoop
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function update(dt){
 
   distance +=
-    speed;
+    speed * dt;
 
-
-  /*
-    Score increases with distance.
-  */
-
-  score +=
-    0.15 * speed;
+  score =
+    Math.floor(
+      distance / 10
+    );
 
 
   /*
     Speed gradually increases.
   */
 
-  speed =
-    1 +
-    Math.min(
-      4,
-      score / 1000
+  speed +=
+    0.0015 * dt;
+
+  if(
+    speed > 18
+  ){
+
+    speed = 18;
+
+  }
+
+
+  roadOffset +=
+    speed * dt;
+
+
+  /*
+    Lane movement.
+  */
+
+  const targetX =
+    laneX(
+      player.targetLane,
+      H*.78
     );
 
-
-  const character =
-    characters[
-      saveData.selectedCharacter
-    ];
-
-
-  const skate =
-    skates[
-      saveData.selectedSkates
-    ];
+  player.x +=
+    (
+      targetX -
+      player.x
+    ) *
+    player.laneMoveSpeed *
+    dt;
 
 
-  speed +=
-    character.speedBonus;
+  /*
+    Jump physics.
+  */
 
+  if(!player.grounded){
 
-  speed +=
-    skate.speedBonus;
+    player.jumpY +=
+      player.jumpVelocity *
+      dt;
+
+    player.jumpVelocity -=
+      .85 * dt;
+
+    if(
+      player.jumpY <= 0
+    ){
+
+      player.jumpY = 0;
+
+      player.jumpVelocity = 0;
+
+      player.grounded = true;
+
+    }
+
+  }
 
 
   /*
     Spawn obstacles.
   */
 
-  spawnTimer +=
-    speed;
+  spawnTimer += dt;
 
+  const spawnRate =
+    Math.max(
+      28,
+      65 -
+      speed*2
+    );
 
-  if (
+  if(
     spawnTimer >
-    75
-  ) {
+    spawnRate
+  ){
 
     spawnObstacle();
 
@@ -1920,27 +1144,67 @@ function updateGame() {
     Spawn coins.
   */
 
-  coinTimer +=
-    speed;
+  coinTimer += dt;
 
+  if(
+    coinTimer > 80
+  ){
 
-  if (
-    coinTimer >
-    45
-  ) {
-
-    spawnCoin();
+    spawnCoinLine();
 
     coinTimer = 0;
 
   }
 
 
-  updatePlayer();
+  /*
+    Move obstacles.
+  */
 
-  updateObstacles();
+  obstacles.forEach(
+    obstacle => {
 
-  updateCoins();
+      obstacle.z +=
+        speed * dt;
+
+    }
+  );
+
+
+  /*
+    Move coins.
+  */
+
+  coins.forEach(
+    coin => {
+
+      coin.z +=
+        speed * dt;
+
+    }
+  );
+
+
+  checkCollisions();
+
+
+  /*
+    Remove objects
+    after passing player.
+  */
+
+  obstacles =
+    obstacles.filter(
+      obstacle =>
+        obstacle.z < 115
+    );
+
+  coins =
+    coins.filter(
+      coin =>
+        coin.z < 115
+    );
+
 
   updateHUD();
 
@@ -1948,53 +1212,88 @@ function updateGame() {
 
 
 /* =====================================================
-   HUD
+   COLLISION
 ===================================================== */
 
-function updateHUD() {
+function checkCollisions(){
 
-  document.getElementById(
-    "coinsText"
-  ).innerText =
-    runCoins;
+  /*
+    Player is near z = 90.
+  */
 
-
-  document.getElementById(
-    "scoreText"
-  ).innerText =
-    Math.floor(
-      score
-    );
+  const playerZ = 90;
 
 
-  document.getElementById(
-    "speedText"
-  ).innerText =
-    speed.toFixed(1);
+  for(
+    const obstacle of obstacles
+  ){
 
-}
+    if(
+      Math.abs(
+        obstacle.z -
+        playerZ
+      ) < 8 &&
 
+      obstacle.lane ===
+      player.targetLane
+    ){
 
-/* =====================================================
-   GAME LOOP
-===================================================== */
+      /*
+        Jumping avoids
+        normal obstacles.
+      */
 
-function gameLoop() {
+      if(
+        player.jumpY < 35
+      ){
 
-  if (!running) {
-    return;
+        endGame();
+
+        return;
+
+      }
+
+    }
+
   }
 
 
-  updateGame();
+  /*
+    Coins.
+  */
 
-  draw();
+  for(
+    const coin of coins
+  ){
 
+    if(
+      !coin.collected &&
 
-  animationID =
-    requestAnimationFrame(
-      gameLoop
-    );
+      Math.abs(
+        coin.z -
+        playerZ
+      ) < 10 &&
+
+      coin.lane ===
+      player.targetLane
+    ){
+
+      /*
+        Coins can be collected
+        while jumping too.
+      */
+
+      coin.collected = true;
+
+      runCoins++;
+
+      save.coins++;
+
+      saveGame();
+
+    }
+
+  }
 
 }
 
@@ -2003,182 +1302,884 @@ function gameLoop() {
    END GAME
 ===================================================== */
 
-function endGame() {
-
-  if (!running) {
-    return;
-  }
-
+function endGame(){
 
   running = false;
 
+  gameOver = true;
 
-  if (animationID) {
-
-    cancelAnimationFrame(
-      animationID
-    );
-
-  }
-
-
-  /*
-    Add run coins permanently.
-  */
-
-  saveData.coins +=
-    runCoins;
-
-
-  /*
-    Save best score.
-  */
-
-  if (
+  if(
     score >
-    saveData.bestScore
-  ) {
+    save.bestScore
+  ){
 
-    saveData.bestScore =
-      Math.floor(score);
-
-  }
-
-
-  /*
-    Unlock Blaze.
-  */
-
-  if (
-    saveData.coins >= 100
-  ) {
-
-    if (
-      !saveData.unlockedCharacters
-        .includes("blaze")
-    ) {
-
-      saveData.unlockedCharacters
-        .push("blaze");
-
-    }
+    save.bestScore =
+      score;
 
   }
-
-
-  /*
-    Unlock Speed Skates.
-  */
-
-  if (
-    saveData.coins >= 250
-  ) {
-
-    if (
-      !saveData.unlockedSkates
-        .includes("speed")
-    ) {
-
-      saveData.unlockedSkates
-        .push("speed");
-
-    }
-
-  }
-
-
-  /*
-    Unlock Shadow.
-  */
-
-  if (
-    saveData.coins >= 500
-  ) {
-
-    if (
-      !saveData.unlockedCharacters
-        .includes("shadow")
-    ) {
-
-      saveData.unlockedCharacters
-        .push("shadow");
-
-    }
-
-  }
-
-
-  /*
-    Unlock Shadow Skates.
-  */
-
-  if (
-    saveData.coins >= 1000
-  ) {
-
-    if (
-      !saveData.unlockedSkates
-        .includes("shadow")
-    ) {
-
-      saveData.unlockedSkates
-        .push("shadow");
-
-    }
-
-  }
-
 
   saveGame();
-
 
   document.getElementById(
     "finalScore"
   ).innerText =
-    Math.floor(score);
-
+    score;
 
   document.getElementById(
     "finalCoins"
   ).innerText =
     runCoins;
 
-
   document.getElementById(
     "finalBest"
   ).innerText =
-    saveData.bestScore;
-
-
-  document
-    .getElementById(
-      "controls"
-    )
-    .classList.add(
-      "hidden"
-    );
-
+    save.bestScore;
 
   document
-    .getElementById(
-      "gameOver"
-    )
-    .classList.remove(
-      "hidden"
-    );
+    .getElementById("gameOver")
+    .classList.remove("hidden");
 
 }
 
 
 /* =====================================================
-   INITIALIZE
+   HUD
 ===================================================== */
+
+function updateHUD(){
+
+  document.getElementById(
+    "coinsText"
+  ).innerText =
+    runCoins;
+
+  document.getElementById(
+    "scoreText"
+  ).innerText =
+    score;
+
+  document.getElementById(
+    "speedText"
+  ).innerText =
+    (
+      speed / 7
+    ).toFixed(1);
+
+}
+
+
+function updateMenu(){
+
+  document.getElementById(
+    "menuCoins"
+  ).innerText =
+    save.coins;
+
+  document.getElementById(
+    "menuBest"
+  ).innerText =
+    save.bestScore;
+
+}
+
 
 updateMenu();
 
-updateHUD();
+
+/* =====================================================
+   DRAW BACKGROUND
+===================================================== */
+
+function draw(){
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /*
+    Sky.
+  */
+
+  const sky =
+    ctx.createLinearGradient(
+      0,
+      0,
+      0,
+      H
+    );
+
+  sky.addColorStop(
+    0,
+    "#05051c"
+  );
+
+  sky.addColorStop(
+    .45,
+    "#101040"
+  );
+
+  sky.addColorStop(
+    1,
+    "#020208"
+  );
+
+  ctx.fillStyle =
+    sky;
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  drawMoon();
+
+  drawBuildings();
+
+  drawRoad();
+
+  drawObjects();
+
+  drawPlayer();
+
+}
+
+
+/* =====================================================
+   MOON
+===================================================== */
+
+function drawMoon(){
+
+  ctx.beginPath();
+
+  ctx.arc(
+    W*.75,
+    H*.14,
+    35,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "#d9f5ff";
+
+  ctx.shadowBlur =
+    30;
+
+  ctx.shadowColor =
+    "#00eaff";
+
+  ctx.fill();
+
+  ctx.shadowBlur =
+    0;
+
+}
+
+
+/* =====================================================
+   BUILDINGS
+===================================================== */
+
+function drawBuildings(){
+
+  const base =
+    roadTop();
+
+  ctx.fillStyle =
+    "#080817";
+
+  for(
+    let i=0;
+    i<10;
+    i++
+  ){
+
+    const width =
+      45 +
+      (i%3)*25;
+
+    const height =
+      70 +
+      (i%4)*45;
+
+    const x =
+      i*65 -
+      (roadOffset*.15 %
+       (W+100));
+
+    ctx.fillRect(
+      x,
+      base-height,
+      width,
+      height
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   ROAD
+===================================================== */
+
+function drawRoad(){
+
+  const top =
+    roadTop();
+
+  const bottom =
+    H;
+
+  const topWidth =
+    Math.min(
+      W*.55,
+      330
+    );
+
+  const bottomWidth =
+    Math.min(
+      W*.95,
+      560
+    );
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    (W-topWidth)/2,
+    top
+  );
+
+  ctx.lineTo(
+    (W+topWidth)/2,
+    top
+  );
+
+  ctx.lineTo(
+    (W+bottomWidth)/2,
+    bottom
+  );
+
+  ctx.lineTo(
+    (W-bottomWidth)/2,
+    bottom
+  );
+
+  ctx.closePath();
+
+  ctx.fillStyle =
+    "#141421";
+
+  ctx.fill();
+
+
+  /*
+    Road edges.
+  */
+
+  ctx.strokeStyle =
+    "#00aaff";
+
+  ctx.lineWidth = 3;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    (W-topWidth)/2,
+    top
+  );
+
+  ctx.lineTo(
+    (W-bottomWidth)/2,
+    bottom
+  );
+
+  ctx.moveTo(
+    (W+topWidth)/2,
+    top
+  );
+
+  ctx.lineTo(
+    (W+bottomWidth)/2,
+    bottom
+  );
+
+  ctx.stroke();
+
+
+  /*
+    Lane markings.
+  */
+
+  for(
+    let lane = 1;
+    lane <= 2;
+    lane++
+  ){
+
+    for(
+      let i=0;
+      i<12;
+      i++
+    ){
+
+      let y =
+        top +
+        (
+          (
+            i*100 +
+            roadOffset*3
+          ) %
+          (H-top+100)
+        );
+
+      const t =
+        (y-top) /
+        (H-top);
+
+      const topX =
+        W/2 +
+        (lane-1.5) *
+        topWidth/3;
+
+      const bottomX =
+        W/2 +
+        (lane-1.5) *
+        bottomWidth/3;
+
+      const x =
+        topX +
+        (bottomX-topX)*t;
+
+      const size =
+        5 +
+        18*t;
+
+      ctx.fillStyle =
+        "rgba(0,180,255,.65)";
+
+      ctx.fillRect(
+        x-size/2,
+        y,
+        size,
+        5+12*t
+      );
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   DRAW OBJECTS
+===================================================== */
+
+function objectPosition(
+  lane,
+  z
+){
+
+  /*
+    z:
+    0 = horizon
+    100 = player
+  */
+
+  const t =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        z/100
+      )
+    );
+
+  const y =
+    roadTop() +
+    (
+      H-roadTop()
+    ) * t;
+
+  return {
+
+    x:
+      laneX(
+        lane,
+        y
+      ),
+
+    y:y,
+
+    scale:
+      .25 +
+      t*.9
+
+  };
+
+}
+
+
+/* =====================================================
+   OBSTACLES
+===================================================== */
+
+function drawObjects(){
+
+  obstacles.forEach(
+    obstacle => {
+
+      const p =
+        objectPosition(
+          obstacle.lane,
+          obstacle.z
+        );
+
+      const width =
+        45*p.scale;
+
+      const height =
+        45*p.scale;
+
+      ctx.save();
+
+      ctx.translate(
+        p.x,
+        p.y
+      );
+
+      if(
+        obstacle.type ===
+        "barrier"
+      ){
+
+        ctx.fillStyle =
+          "#ff3344";
+
+        ctx.fillRect(
+          -width/2,
+          -height,
+          width,
+          height
+        );
+
+        ctx.fillStyle =
+          "#111";
+
+        ctx.fillRect(
+          -width/2,
+          -height*.75,
+          width,
+          height*.15
+        );
+
+        ctx.fillRect(
+          -width/2,
+          -height*.35,
+          width,
+          height*.15
+        );
+
+      }else{
+
+        ctx.fillStyle =
+          "#7733ff";
+
+        ctx.shadowBlur =
+          15;
+
+        ctx.shadowColor =
+          "#aa44ff";
+
+        ctx.fillRect(
+          -width/2,
+          -height,
+          width,
+          height
+        );
+
+        ctx.shadowBlur =
+          0;
+
+      }
+
+      ctx.restore();
+
+    }
+  );
+
+
+  /*
+    Coins.
+  */
+
+  coins.forEach(
+    coin => {
+
+      if(
+        coin.collected
+      )
+        return;
+
+      const p =
+        objectPosition(
+          coin.lane,
+          coin.z
+        );
+
+      const radius =
+        9*p.scale;
+
+      ctx.beginPath();
+
+      ctx.arc(
+        p.x,
+        p.y-heightOffset(),
+        radius,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fillStyle =
+        "#ffd700";
+
+      ctx.shadowBlur =
+        15;
+
+      ctx.shadowColor =
+        "#ffcc00";
+
+      ctx.fill();
+
+      ctx.shadowBlur =
+        0;
+
+    }
+  );
+
+}
+
+
+function heightOffset(){
+
+  return 20;
+
+}
+
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
+function drawPlayer(){
+
+  const groundY =
+    H*.82;
+
+  const y =
+    groundY -
+    player.jumpY;
+
+
+  ctx.save();
+
+  ctx.translate(
+    player.x,
+    y
+  );
+
+
+  /*
+    Shadow underneath player.
+  */
+
+  ctx.beginPath();
+
+  ctx.ellipse(
+    0,
+    4,
+    25,
+    8,
+    0,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "rgba(0,0,0,.5)";
+
+  ctx.fill();
+
+
+  /*
+    Character colors.
+  */
+
+  let bodyColor =
+    "#00aaff";
+
+  if(
+    selectedCharacter ===
+    "blaze"
+  ){
+
+    bodyColor =
+      "#ff5533";
+
+  }
+
+  if(
+    selectedCharacter ===
+    "shadow"
+  ){
+
+    bodyColor =
+      "#9922ff";
+
+  }
+
+
+  /*
+    Head.
+  */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    0,
+    -55,
+    13,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "#e6c2a5";
+
+  ctx.fill();
+
+
+  /*
+    Hair.
+  */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    0,
+    -59,
+    14,
+    Math.PI,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    "#111";
+
+  ctx.fill();
+
+
+  /*
+    Body.
+  */
+
+  ctx.fillStyle =
+    bodyColor;
+
+  ctx.fillRect(
+    -13,
+    -42,
+    26,
+    32
+  );
+
+
+  /*
+    Arms.
+  */
+
+  ctx.strokeStyle =
+    bodyColor;
+
+  ctx.lineWidth =
+    7;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -12,
+    -37
+  );
+
+  ctx.lineTo(
+    -25,
+    -18
+  );
+
+  ctx.moveTo(
+    12,
+    -37
+  );
+
+  ctx.lineTo(
+    25,
+    -18
+  );
+
+  ctx.stroke();
+
+
+  /*
+    Legs.
+  */
+
+  ctx.strokeStyle =
+    "#202030";
+
+  ctx.lineWidth =
+    9;
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    -7,
+    -10
+  );
+
+  ctx.lineTo(
+    -12,
+    12
+  );
+
+  ctx.moveTo(
+    7,
+    -10
+  );
+
+  ctx.lineTo(
+    12,
+    12
+  );
+
+  ctx.stroke();
+
+
+  /*
+    Skates.
+  */
+
+  if(
+    movement ===
+    "skate"
+  ){
+
+    ctx.fillStyle =
+      "#00eaff";
+
+    ctx.fillRect(
+      -20,
+      9,
+      15,
+      5
+    );
+
+    ctx.fillRect(
+      5,
+      9,
+      15,
+      5
+    );
+
+    ctx.fillStyle =
+      "#222";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      -15,
+      16,
+      4,
+      0,
+      Math.PI*2
+    );
+
+    ctx.arc(
+      15,
+      16,
+      4,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  }
+
+
+  /*
+    Shadow aura.
+  */
+
+  if(
+    selectedCharacter ===
+    "shadow"
+  ){
+
+    ctx.beginPath();
+
+    ctx.arc(
+      0,
+      -30,
+      35,
+      0,
+      Math.PI*2
+    );
+
+    ctx.strokeStyle =
+      "rgba(150,50,255,.45)";
+
+    ctx.lineWidth =
+      3;
+
+    ctx.stroke();
+
+  }
+
+
+  ctx.restore();
+
+}
+
+
+/* =====================================================
+   PREVENT SCROLLING
+===================================================== */
+
+document.addEventListener(
+  "touchmove",
+  function(e){
+
+    if(running){
+
+      e.preventDefault();
+
+    }
+
+  },
+  {passive:false}
+);
 
 </script>
 
 </body>
-  </html>
+                                    </html>
