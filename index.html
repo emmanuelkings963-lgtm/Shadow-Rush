@@ -117,6 +117,18 @@ button{
   font-size:13px;
   margin-top:15px;
 }
+      #menu,
+#gameOver {
+  pointer-events: auto;
+}
+
+#menu button,
+#gameOver button {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
 </style>
 </head>
 
@@ -766,57 +778,45 @@ function createCoins(){
 
 function startGame(){
 
-  document
-    .getElementById("menu")
+  document.getElementById("menu")
     .classList.add("hidden");
 
-  document
-    .getElementById("gameOver")
+  document.getElementById("gameOver")
     .classList.add("hidden");
 
-  objects.forEach(
-    o=>scene.remove(o)
-  );
+  objects.forEach(o => scene.remove(o));
+  coinObjects.forEach(c => scene.remove(c));
 
-  coinObjects.forEach(
-    c=>scene.remove(c)
-  );
+  objects = [];
+  coinObjects = [];
 
-  objects=[];
-  coinObjects=[];
+  lane = 0;
+  targetX = 0;
 
-  lane=0;
-  targetX=0;
+  player.position.set(0, 1.1, 4);
 
-  player.position.set(
-    0,
-    1.1,
-    4
-  );
+  verticalVelocity = 0;
+  grounded = true;
 
-  verticalVelocity=0;
-  grounded=true;
+  sliding = false;
+  player.scale.y = 1;
 
-  sliding=false;
+  score = 0;
+  runCoins = 0;
 
-  score=0;
-  runCoins=0;
+  gameSpeed = .42;
 
-  gameSpeed=.42;
+  spawnTimer = 0;
+  coinTimer = 0;
 
-  spawnTimer=0;
-  coinTimer=0;
+  running = true;
 
-  running=true;
+  lastTime = performance.now();
 
-  lastTime=
-    performance.now();
+  updateHUD();
 
-  requestAnimationFrame(
-    loop
-  );
-
-}
+  requestAnimationFrame(loop);
+      }
 
 
 /* =====================================================
