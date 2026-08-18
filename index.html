@@ -3,38 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-               maximum-scale=1.0,user-scalable=no">
+      content="width=device-width,initial-scale=1.0,
+      maximum-scale=1.0,user-scalable=no">
 
 <title>Shadow Rush</title>
 
 <style>
 *{
   box-sizing:border-box;
+  margin:0;
+  padding:0;
   user-select:none;
   -webkit-user-select:none;
 }
 
 html,body{
-  margin:0;
   width:100%;
   height:100%;
   overflow:hidden;
-  background:#03030a;
+  background:#02030a;
   font-family:Arial,sans-serif;
-  color:white;
+}
+
+#game{
+  position:fixed;
+  inset:0;
 }
 
 canvas{
   display:block;
-  width:100%;
-  height:100%;
-  background:#050510;
 }
 
 #hud{
   position:fixed;
-  top:10px;
+  top:12px;
   left:50%;
   transform:translateX(-50%);
   width:94%;
@@ -45,12 +47,12 @@ canvas{
   pointer-events:none;
 }
 
-.hudBox{
-  padding:8px 11px;
+.stat{
+  background:rgba(0,0,0,.65);
   border:2px solid #00eaff;
   border-radius:10px;
-  background:rgba(0,0,0,.7);
-  color:#00eaff;
+  padding:8px 12px;
+  color:#fff;
   font-weight:bold;
   text-shadow:0 0 8px #00eaff;
 }
@@ -64,210 +66,117 @@ canvas{
   align-items:center;
   justify-content:center;
   background:
-    radial-gradient(circle at center,
-    #101040 0%,
-    #050510 45%,
-    #010105 100%);
+    radial-gradient(circle,#11174d,#03040b 70%);
 }
 
-.box{
-  width:92%;
-  max-width:420px;
-  padding:25px;
+.panel{
+  width:90%;
+  max-width:400px;
+  padding:28px;
+  text-align:center;
   border:2px solid #00eaff;
   border-radius:20px;
-  background:rgba(7,7,20,.95);
-  box-shadow:
-    0 0 30px #0066ff,
-    inset 0 0 20px rgba(0,170,255,.15);
-  text-align:center;
+  background:rgba(3,5,18,.94);
+  box-shadow:0 0 35px #005eff;
+  color:white;
 }
 
 h1{
   color:#00eaff;
-  text-shadow:0 0 18px #008cff;
+  font-size:34px;
+  text-shadow:0 0 18px #00aaff;
+  margin-bottom:12px;
 }
 
 h2{
-  color:#b9f8ff;
+  color:#ff416c;
 }
 
 button{
-  padding:12px 18px;
-  margin:6px;
-  border:2px solid #00aaff;
-  border-radius:10px;
-  background:#07071b;
+  padding:13px 22px;
+  margin:7px;
+  border:2px solid #00cfff;
+  border-radius:11px;
+  background:#070b20;
   color:#00eaff;
+  font-size:16px;
   font-weight:bold;
-  font-size:15px;
-  cursor:pointer;
-}
-
-button:active{
-  transform:scale(.94);
-}
-
-.choice{
-  border:1px solid #30305a;
-  border-radius:12px;
-  padding:10px;
-  margin:10px 0;
-}
-
-.selected{
-  border-color:#00eaff;
-  box-shadow:0 0 15px #0066ff;
-}
-
-#controls{
-  position:fixed;
-  bottom:15px;
-  left:50%;
-  transform:translateX(-50%);
-  width:94%;
-  max-width:500px;
-  display:flex;
-  justify-content:space-between;
-  z-index:8;
-  pointer-events:none;
-}
-
-.control{
-  width:72px;
-  height:58px;
-  margin:0;
-  font-size:25px;
-  background:rgba(0,0,0,.65);
-  pointer-events:auto;
-}
-
-#jumpButton{
-  width:82px;
 }
 
 .hidden{
   display:none!important;
 }
 
-#gameOver{
-  background:rgba(0,0,0,.88);
-}
-
-#gameOver h1{
-  color:#ff3355;
-  text-shadow:0 0 15px #ff0033;
+.info{
+  margin:14px 0;
+  line-height:1.7;
 }
 
 .small{
   color:#aaa;
   font-size:13px;
+  margin-top:15px;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="gameCanvas"></canvas>
+<div id="game"></div>
 
-<!-- HUD -->
 <div id="hud">
 
-  <div class="hudBox">
-    🪙 <span id="coinsText">0</span>
+  <div class="stat">
+    🪙 <span id="coins">0</span>
   </div>
 
-  <div class="hudBox">
-    🏆 <span id="scoreText">0</span>
+  <div class="stat">
+    🏆 <span id="score">0</span>
   </div>
 
-  <div class="hudBox">
-    ⚡ <span id="speedText">1.0</span>
+  <div class="stat">
+    ⚡ <span id="speed">1.0</span>
   </div>
 
 </div>
 
 
-<!-- MAIN MENU -->
 <div id="menu">
 
-  <div class="box">
+  <div class="panel">
 
     <h1>🌑 SHADOW RUSH</h1>
 
     <p>
-      🏃 THE ENDLESS RUN BEGINS
+      THE ENDLESS RUN BEGINS
     </p>
 
+    <div class="info">
+
+      🏃 Run automatically<br>
+      👈 Swipe left<br>
+      👉 Swipe right<br>
+      👆 Swipe up to jump<br>
+      👇 Swipe down to slide
+
+    </div>
+
     <p>
-      Coins:
+      Total Coins:
       <strong id="menuCoins">0</strong>
     </p>
 
     <p>
       Best Score:
-      <strong id="menuBest">0</strong>
-    </p>
-
-    <div class="choice">
-
-      <strong>🧑 CHARACTER</strong>
-
-      <br>
-
-      <button
-        id="rookieBtn"
-        onclick="selectCharacter('rookie')">
-        Rookie
-      </button>
-
-      <button
-        id="blazeBtn"
-        onclick="selectCharacter('blaze')">
-        Blaze
-      </button>
-
-      <button
-        id="shadowBtn"
-        onclick="selectCharacter('shadow')">
-        Shadow
-      </button>
-
-    </div>
-
-
-    <div class="choice">
-
-      <strong>🛼 MOVEMENT</strong>
-
-      <br>
-
-      <button
-        id="footBtn"
-        onclick="selectMovement('foot')">
-        🏃 Foot
-      </button>
-
-      <button
-        id="skateBtn"
-        onclick="selectMovement('skate')">
-        🛼 Skates
-      </button>
-
-    </div>
-
-
-    <p id="selectionText">
-      🧑 Rookie + 🏃 Foot
+      <strong id="best">0</strong>
     </p>
 
     <button onclick="startGame()">
-      ▶️ START RUN
+      ▶ START RUN
     </button>
 
     <p class="small">
-      Swipe left/right to change lanes.<br>
-      Swipe up to jump.
+      No buttons are needed during gameplay.
     </p>
 
   </div>
@@ -275,37 +184,13 @@ button:active{
 </div>
 
 
-<!-- CONTROLS -->
-<div id="controls">
-
-  <button
-    class="control"
-    onclick="moveLeft()">
-    ◀
-  </button>
-
-  <button
-    id="jumpButton"
-    class="control"
-    onclick="jump()">
-    ⬆
-  </button>
-
-  <button
-    class="control"
-    onclick="moveRight()">
-    ▶
-  </button>
-
-</div>
-
-
-<!-- GAME OVER -->
 <div id="gameOver" class="hidden">
 
-  <div class="box">
+  <div class="panel">
 
-    <h1>💀 RUN OVER</h1>
+    <h2>RUN OVER</h2>
+
+    <br>
 
     <p>
       Score:
@@ -318,15 +203,17 @@ button:active{
     </p>
 
     <p>
-      Best Score:
+      Best:
       <strong id="finalBest">0</strong>
     </p>
 
-    <button onclick="restartGame()">
+    <br>
+
+    <button onclick="startGame()">
       🔄 RUN AGAIN
     </button>
 
-    <button onclick="returnMenu()">
+    <button onclick="showMenu()">
       🏠 MENU
     </button>
 
@@ -335,339 +222,540 @@ button:active{
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+
 <script>
-
-/* =====================================================
-   CANVAS
-===================================================== */
-
-const canvas =
-  document.getElementById("gameCanvas");
-
-const ctx =
-  canvas.getContext("2d");
-
-let W = 0;
-let H = 0;
-
-function resizeCanvas(){
-
-  const dpr =
-    Math.min(
-      window.devicePixelRatio || 1,
-      2
-    );
-
-  W = window.innerWidth;
-  H = window.innerHeight;
-
-  canvas.width =
-    W * dpr;
-
-  canvas.height =
-    H * dpr;
-
-  canvas.style.width =
-    W + "px";
-
-  canvas.style.height =
-    H + "px";
-
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
-  );
-}
-
-window.addEventListener(
-  "resize",
-  resizeCanvas
-);
-
-resizeCanvas();
-
 
 /* =====================================================
    SAVE
 ===================================================== */
 
 const SAVE_KEY =
-  "shadowRushSave_v1";
+  "shadowRush3D";
 
 let save = {
-
   coins:0,
-
-  bestScore:0
-
+  best:0
 };
 
 try{
 
-  const stored =
-    localStorage.getItem(
-      SAVE_KEY
-    );
+  const old =
+    localStorage.getItem(SAVE_KEY);
 
-  if(stored){
-
-    save =
-      {
-        ...save,
-        ...JSON.parse(stored)
-      };
-
+  if(old){
+    save = {
+      ...save,
+      ...JSON.parse(old)
+    };
   }
 
-}catch(e){
-
-  console.log(e);
-
-}
-
+}catch(e){}
 
 function saveGame(){
 
-  try{
+  localStorage.setItem(
+    SAVE_KEY,
+    JSON.stringify(save)
+  );
 
-    localStorage.setItem(
-      SAVE_KEY,
-      JSON.stringify(save)
+}
+
+
+/* =====================================================
+   THREE.JS
+===================================================== */
+
+const container =
+  document.getElementById("game");
+
+const scene =
+  new THREE.Scene();
+
+scene.background =
+  new THREE.Color(0x030617);
+
+scene.fog =
+  new THREE.Fog(
+    0x030617,
+    35,
+    180
+  );
+
+
+const camera =
+  new THREE.PerspectiveCamera(
+    65,
+    window.innerWidth /
+    window.innerHeight,
+    .1,
+    500
+  );
+
+camera.position.set(
+  0,
+  4.5,
+  8
+);
+
+
+const renderer =
+  new THREE.WebGLRenderer({
+    antialias:true
+  });
+
+renderer.setPixelRatio(
+  Math.min(
+    window.devicePixelRatio,
+    2
+  )
+);
+
+renderer.setSize(
+  window.innerWidth,
+  window.innerHeight
+);
+
+container.appendChild(
+  renderer.domElement
+);
+
+
+/* =====================================================
+   LIGHTING
+===================================================== */
+
+const ambient =
+  new THREE.HemisphereLight(
+    0x88aaff,
+    0x080810,
+    1.5
+  );
+
+scene.add(ambient);
+
+
+const moonLight =
+  new THREE.DirectionalLight(
+    0x99bbff,
+    1.4
+  );
+
+moonLight.position.set(
+  -20,
+  30,
+  20
+);
+
+scene.add(moonLight);
+
+
+/* =====================================================
+   WORLD
+===================================================== */
+
+const roadLength = 220;
+
+const road =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      12,
+      .2,
+      roadLength
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0x111522
+    })
+  );
+
+road.position.set(
+  0,
+  0,
+  -70
+);
+
+scene.add(road);
+
+
+/* Lane lines */
+
+const laneMaterial =
+  new THREE.MeshBasicMaterial({
+    color:0x00bfff
+  });
+
+for(let lane=-1;lane<=1;lane+=2){
+
+  const line =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        .08,
+        .03,
+        roadLength
+      ),
+      laneMaterial
     );
 
-  }catch(e){
+  line.position.set(
+    lane*2,
+    .13,
+    -70
+  );
 
-    console.log(e);
+  scene.add(line);
+
+}
+
+
+/* =====================================================
+   SIDE BUILDINGS
+===================================================== */
+
+const buildings = [];
+
+function createBuildings(){
+
+  for(let i=0;i<35;i++){
+
+    const height =
+      4 + Math.random()*12;
+
+    const width =
+      3 + Math.random()*5;
+
+    const depth =
+      4 + Math.random()*8;
+
+    const material =
+      new THREE.MeshStandardMaterial({
+        color:
+          Math.random() > .5
+            ? 0x101633
+            : 0x171126
+      });
+
+    const building =
+      new THREE.Mesh(
+        new THREE.BoxGeometry(
+          width,
+          height,
+          depth
+        ),
+        material
+      );
+
+    const side =
+      i%2===0
+        ? -1
+        : 1;
+
+    building.position.set(
+      side*(9+Math.random()*8),
+      height/2,
+      -i*7-10
+    );
+
+    scene.add(building);
+
+    buildings.push(building);
 
   }
 
 }
 
-
-/* =====================================================
-   PLAYER SETTINGS
-===================================================== */
-
-let selectedCharacter =
-  "rookie";
-
-let movement =
-  "foot";
-
-
-function selectCharacter(type){
-
-  selectedCharacter =
-    type;
-
-  updateSelection();
-
-}
-
-
-function selectMovement(type){
-
-  movement =
-    type;
-
-  updateSelection();
-
-}
-
-
-function updateSelection(){
-
-  document
-    .querySelectorAll(".choice button")
-    .forEach(
-      button =>
-        button.classList.remove(
-          "selected"
-        )
-    );
-
-  document
-    .getElementById(
-      selectedCharacter + "Btn"
-    )
-    .classList.add(
-      "selected"
-    );
-
-  document
-    .getElementById(
-      movement === "foot"
-        ? "footBtn"
-        : "skateBtn"
-    )
-    .classList.add(
-      "selected"
-    );
-
-
-  const names = {
-
-    rookie:"Rookie",
-
-    blaze:"Blaze",
-
-    shadow:"Shadow"
-
-  };
-
-  document.getElementById(
-    "selectionText"
-  ).innerText =
-
-    "🧑 " +
-    names[selectedCharacter] +
-
-    " + " +
-
-    (
-      movement === "foot"
-        ? "🏃 Foot"
-        : "🛼 Skates"
-    );
-
-}
-
-
-updateSelection();
-
-
-/* =====================================================
-   GAME STATE
-===================================================== */
-
-let running =
-  false;
-
-let gameOver =
-  false;
-
-let animationId =
-  null;
-
-let score =
-  0;
-
-let runCoins =
-  0;
-
-let speed =
-  7;
-
-let distance =
-  0;
-
-let spawnTimer =
-  0;
-
-let coinTimer =
-  0;
-
-let roadOffset =
-  0;
+createBuildings();
 
 
 /* =====================================================
    PLAYER
 ===================================================== */
 
-const player = {
+const player =
+  new THREE.Group();
 
-  lane:1,
+scene.add(player);
 
-  targetLane:1,
-
-  x:0,
-
-  y:0,
-
-  width:42,
-
-  height:70,
-
-  jumpY:0,
-
-  jumpVelocity:0,
-
-  grounded:true,
-
-  laneMoveSpeed:0.25
-
-};
+player.position.set(
+  0,
+  1.1,
+  4
+);
 
 
-/* =====================================================
-   OBJECTS
-===================================================== */
+/* Body */
 
-let obstacles = [];
-
-let coins = [];
-
-
-/* =====================================================
-   ROAD
-===================================================== */
-
-function roadTop(){
-
-  return H * 0.38;
-
-}
-
-function roadBottom(){
-
-  return H;
-
-}
-
-function laneX(
-  lane,
-  y
-){
-
-  const topWidth =
-    Math.min(
-      W * .55,
-      330
-    );
-
-  const bottomWidth =
-    Math.min(
-      W * .95,
-      560
-    );
-
-  const t =
-    Math.max(
-      0,
-      Math.min(
-        1,
-        (y - roadTop()) /
-        (H - roadTop())
-      )
-    );
-
-  const width =
-    topWidth +
-    (bottomWidth-topWidth)*t;
-
-  const left =
-    (W-width)/2;
-
-  return (
-    left +
-    width *
-    ((lane + .5)/3)
+const body =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .75,
+      1.15,
+      .45
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0x00aaff
+    })
   );
+
+body.position.y =
+  0;
+
+player.add(body);
+
+
+/* Head */
+
+const head =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      .32,
+      16,
+      16
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0xd9ad91
+    })
+  );
+
+head.position.y =
+  .85;
+
+player.add(head);
+
+
+/* Hair */
+
+const hair =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      .34,
+      16,
+      16,
+      0,
+      Math.PI*2,
+      0,
+      Math.PI/2
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0x080808
+    })
+  );
+
+hair.position.y =
+  1.02;
+
+player.add(hair);
+
+
+/* Legs */
+
+const legMaterial =
+  new THREE.MeshStandardMaterial({
+    color:0x171c30
+  });
+
+const leftLeg =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .22,
+      .75,
+      .25
+    ),
+    legMaterial
+  );
+
+leftLeg.position.set(
+  -.22,
+  -.9,
+  0
+);
+
+player.add(leftLeg);
+
+
+const rightLeg =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .22,
+      .75,
+      .25
+    ),
+    legMaterial
+  );
+
+rightLeg.position.set(
+  .22,
+  -.9,
+  0
+);
+
+player.add(rightLeg);
+
+
+/* Arms */
+
+const armMaterial =
+  new THREE.MeshStandardMaterial({
+    color:0x00aaff
+  });
+
+const leftArm =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .18,
+      .75,
+      .2
+    ),
+    armMaterial
+  );
+
+leftArm.position.set(
+  -.52,
+  -.05,
+  0
+);
+
+player.add(leftArm);
+
+
+const rightArm =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .18,
+      .75,
+      .2
+    ),
+    armMaterial
+  );
+
+rightArm.position.set(
+  .52,
+  -.05,
+  0
+);
+
+player.add(rightArm);
+
+
+/* =====================================================
+   PLAYER STATE
+===================================================== */
+
+let lane = 0;
+let targetX = 0;
+
+let verticalVelocity = 0;
+let grounded = true;
+
+let sliding = false;
+let slideTimer = 0;
+
+const laneWidth = 2;
+
+
+/* =====================================================
+   GAME STATE
+===================================================== */
+
+let running = false;
+
+let score = 0;
+
+let runCoins = 0;
+
+let gameSpeed = .42;
+
+let objects = [];
+
+let coinObjects = [];
+
+let spawnTimer = 0;
+
+let coinTimer = 0;
+
+let lastTime = 0;
+
+
+/* =====================================================
+   OBSTACLE
+===================================================== */
+
+function createObstacle(){
+
+  const laneNumber =
+    Math.floor(
+      Math.random()*3
+    ) - 1;
+
+  const obstacle =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        1.3,
+        1.2,
+        1.3
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0xff3155
+      })
+    );
+
+  obstacle.position.set(
+    laneNumber*laneWidth,
+    .6,
+    -100
+  );
+
+  scene.add(obstacle);
+
+  objects.push(
+    obstacle
+  );
+
+}
+
+
+/* =====================================================
+   COINS
+===================================================== */
+
+function createCoins(){
+
+  const laneNumber =
+    Math.floor(
+      Math.random()*3
+    ) - 1;
+
+  for(let i=0;i<6;i++){
+
+    const coin =
+      new THREE.Mesh(
+        new THREE.TorusGeometry(
+          .25,
+          .08,
+          8,
+          16
+        ),
+        new THREE.MeshStandardMaterial({
+          color:0xffd700,
+          emissive:0x664400
+        })
+      );
+
+    coin.rotation.x =
+      Math.PI/2;
+
+    coin.position.set(
+      laneNumber*laneWidth,
+      1.4,
+      -80-i*3
+    );
+
+    scene.add(coin);
+
+    coinObjects.push(
+      coin
+    );
+
+  }
 
 }
 
@@ -686,110 +774,66 @@ function startGame(){
     .getElementById("gameOver")
     .classList.add("hidden");
 
-  score = 0;
-
-  runCoins = 0;
-
-  speed =
-    movement === "skate"
-      ? 8
-      : 7;
-
-  distance = 0;
-
-  spawnTimer = 0;
-
-  coinTimer = 0;
-
-  roadOffset = 0;
-
-  obstacles = [];
-
-  coins = [];
-
-  player.lane = 1;
-
-  player.targetLane = 1;
-
-  player.jumpY = 0;
-
-  player.jumpVelocity = 0;
-
-  player.grounded = true;
-
-  player.x =
-    laneX(
-      1,
-      H*.78
-    );
-
-  running = true;
-
-  gameOver = false;
-
-  updateHUD();
-
-  cancelAnimationFrame(
-    animationId
+  objects.forEach(
+    o=>scene.remove(o)
   );
 
-  animationId =
-    requestAnimationFrame(
-      gameLoop
-    );
+  coinObjects.forEach(
+    c=>scene.remove(c)
+  );
+
+  objects=[];
+  coinObjects=[];
+
+  lane=0;
+  targetX=0;
+
+  player.position.set(
+    0,
+    1.1,
+    4
+  );
+
+  verticalVelocity=0;
+  grounded=true;
+
+  sliding=false;
+
+  score=0;
+  runCoins=0;
+
+  gameSpeed=.42;
+
+  spawnTimer=0;
+  coinTimer=0;
+
+  running=true;
+
+  lastTime=
+    performance.now();
+
+  requestAnimationFrame(
+    loop
+  );
 
 }
 
 
 /* =====================================================
-   RESTART
-===================================================== */
-
-function restartGame(){
-
-  startGame();
-
-}
-
-
-/* =====================================================
-   RETURN MENU
-===================================================== */
-
-function returnMenu(){
-
-  running = false;
-
-  gameOver = false;
-
-  document
-    .getElementById("gameOver")
-    .classList.add("hidden");
-
-  document
-    .getElementById("menu")
-    .classList.remove("hidden");
-
-  updateMenu();
-
-}
-
-
-/* =====================================================
-   LANE MOVEMENT
+   MOVEMENT
 ===================================================== */
 
 function moveLeft(){
 
   if(!running) return;
 
-  if(
-    player.targetLane > 0
-  ){
+  lane--;
 
-    player.targetLane--;
+  if(lane < -1)
+    lane=-1;
 
-  }
+  targetX =
+    lane*laneWidth;
 
 }
 
@@ -798,87 +842,83 @@ function moveRight(){
 
   if(!running) return;
 
-  if(
-    player.targetLane < 2
-  ){
+  lane++;
 
-    player.targetLane++;
+  if(lane > 1)
+    lane=1;
 
-  }
+  targetX =
+    lane*laneWidth;
 
 }
 
-
-/* =====================================================
-   JUMP
-===================================================== */
 
 function jump(){
 
   if(
     !running ||
-    !player.grounded
-  ){
-
+    !grounded ||
+    sliding
+  )
     return;
 
-  }
+  grounded=false;
 
-  player.grounded =
-    false;
+  verticalVelocity=.27;
 
-  player.jumpVelocity =
-    movement === "skate"
-      ? 17
-      : 16;
+}
+
+
+function slide(){
+
+  if(
+    !running ||
+    !grounded
+  )
+    return;
+
+  sliding=true;
+
+  slideTimer=500;
 
 }
 
 
 /* =====================================================
-   INPUT
+   SWIPE CONTROLS
 ===================================================== */
 
-let touchStartX = 0;
-let touchStartY = 0;
+let startX=0;
+let startY=0;
 
-canvas.addEventListener(
+renderer.domElement.addEventListener(
   "touchstart",
-  function(e){
+  e=>{
 
-    const touch =
-      e.touches[0];
+    const t=e.touches[0];
 
-    touchStartX =
-      touch.clientX;
-
-    touchStartY =
-      touch.clientY;
+    startX=t.clientX;
+    startY=t.clientY;
 
   },
   {passive:true}
 );
 
 
-canvas.addEventListener(
+renderer.domElement.addEventListener(
   "touchend",
-  function(e){
+  e=>{
 
-    if(!running) return;
+    if(!running)
+      return;
 
-    const touch =
-      e.changedTouches[0];
+    const t=e.changedTouches[0];
 
     const dx =
-      touch.clientX -
-      touchStartX;
+      t.clientX-startX;
 
     const dy =
-      touch.clientY -
-      touchStartY;
-
-    const minSwipe =
-      35;
+      t.clientY-startY;
 
     if(
       Math.abs(dx) >
@@ -886,11 +926,10 @@ canvas.addEventListener(
     ){
 
       if(
-        Math.abs(dx) >
-        minSwipe
+        Math.abs(dx)>30
       ){
 
-        if(dx > 0)
+        if(dx>0)
           moveRight();
         else
           moveLeft();
@@ -900,10 +939,13 @@ canvas.addEventListener(
     }else{
 
       if(
-        dy < -minSwipe
+        Math.abs(dy)>30
       ){
 
-        jump();
+        if(dy<0)
+          jump();
+        else
+          slide();
 
       }
 
@@ -914,121 +956,52 @@ canvas.addEventListener(
 );
 
 
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
 document.addEventListener(
   "keydown",
-  function(e){
+  e=>{
 
-    if(e.key === "ArrowLeft")
+    if(e.key==="ArrowLeft")
       moveLeft();
 
-    if(e.key === "ArrowRight")
+    if(e.key==="ArrowRight")
       moveRight();
 
-    if(
-      e.key === "ArrowUp" ||
-      e.key === " "
-    ){
-
+    if(e.key==="ArrowUp")
       jump();
 
-    }
+    if(e.key==="ArrowDown")
+      slide();
 
   }
 );
 
 
 /* =====================================================
-   SPAWN OBSTACLE
+   COLLISION
 ===================================================== */
 
-function spawnObstacle(){
+function collision(a,b){
 
-  const lane =
-    Math.floor(
-      Math.random()*3
-    );
+  return (
+    Math.abs(
+      a.position.x -
+      b.position.x
+    ) < 1 &&
 
-  obstacles.push({
+    Math.abs(
+      a.position.z -
+      b.position.z
+    ) < 1.2 &&
 
-    lane:lane,
-
-    z:0,
-
-    type:
-      Math.random() < .5
-        ? "barrier"
-        : "block"
-
-  });
-
-}
-
-
-/* =====================================================
-   SPAWN COINS
-===================================================== */
-
-function spawnCoinLine(){
-
-  const lane =
-    Math.floor(
-      Math.random()*3
-    );
-
-  const amount =
-    4 +
-    Math.floor(
-      Math.random()*4
-    );
-
-  for(
-    let i=0;
-    i<amount;
-    i++
-  ){
-
-    coins.push({
-
-      lane:lane,
-
-      z:
-        -i * 75
-
-    });
-
-  }
-
-}
-
-
-/* =====================================================
-   GAME LOOP
-===================================================== */
-
-let lastTime = 0;
-
-function gameLoop(time){
-
-  if(!running)
-    return;
-
-  const delta =
-    Math.min(
-      (time-lastTime)/16.67,
-      2
-    );
-
-  lastTime =
-    time;
-
-  update(delta);
-
-  draw();
-
-  animationId =
-    requestAnimationFrame(
-      gameLoop
-    );
+    Math.abs(
+      a.position.y -
+      b.position.y
+    ) < 1.5
+  );
 
 }
 
@@ -1039,76 +1012,41 @@ function gameLoop(time){
 
 function update(dt){
 
-  distance +=
-    speed * dt;
-
-  score =
-    Math.floor(
-      distance / 10
-    );
-
-
   /*
-    Speed gradually increases.
+    Smooth lane movement.
   */
 
-  speed +=
-    0.0015 * dt;
-
-  if(
-    speed > 18
-  ){
-
-    speed = 18;
-
-  }
-
-
-  roadOffset +=
-    speed * dt;
-
-
-  /*
-    Lane movement.
-  */
-
-  const targetX =
-    laneX(
-      player.targetLane,
-      H*.78
-    );
-
-  player.x +=
+  player.position.x +=
     (
       targetX -
-      player.x
-    ) *
-    player.laneMoveSpeed *
-    dt;
+      player.position.x
+    ) * .18;
 
 
   /*
-    Jump physics.
+    Jump.
   */
 
-  if(!player.grounded){
+  if(!grounded){
 
-    player.jumpY +=
-      player.jumpVelocity *
+    player.position.y +=
+      verticalVelocity *
       dt;
 
-    player.jumpVelocity -=
-      .85 * dt;
+    verticalVelocity -=
+      .014 *
+      dt;
 
     if(
-      player.jumpY <= 0
+      player.position.y <=
+      1.1
     ){
 
-      player.jumpY = 0;
+      player.position.y=1.1;
 
-      player.jumpVelocity = 0;
+      verticalVelocity=0;
 
-      player.grounded = true;
+      grounded=true;
 
     }
 
@@ -1116,142 +1054,134 @@ function update(dt){
 
 
   /*
-    Spawn obstacles.
+    Slide.
+  */
+
+  if(sliding){
+
+    slideTimer -= dt*16;
+
+    player.scale.y=.55;
+
+    if(slideTimer<=0){
+
+      sliding=false;
+
+      player.scale.y=1;
+
+    }
+
+  }
+
+
+  /*
+    Running animation.
+  */
+
+  const run =
+    performance.now()/100;
+
+  leftLeg.rotation.x =
+    Math.sin(run)*.6;
+
+  rightLeg.rotation.x =
+    -Math.sin(run)*.6;
+
+  leftArm.rotation.x =
+    -Math.sin(run)*.5;
+
+  rightArm.rotation.x =
+    Math.sin(run)*.5;
+
+
+  /*
+    Speed.
+  */
+
+  gameSpeed +=
+    .000025 *
+    dt;
+
+  if(gameSpeed>.9)
+    gameSpeed=.9;
+
+
+  /*
+    Objects move.
+  */
+
+  objects.forEach(
+    object=>{
+
+      object.position.z +=
+        gameSpeed*dt;
+
+    }
+  );
+
+
+  coinObjects.forEach(
+    coin=>{
+
+      coin.position.z +=
+        gameSpeed*dt;
+
+      coin.rotation.z +=
+        .08*dt;
+
+    }
+  );
+
+
+  /*
+    Spawn.
   */
 
   spawnTimer += dt;
 
-  const spawnRate =
-    Math.max(
-      28,
-      65 -
-      speed*2
-    );
-
-  if(
-    spawnTimer >
-    spawnRate
-  ){
-
-    spawnObstacle();
-
-    spawnTimer = 0;
-
-  }
-
-
-  /*
-    Spawn coins.
-  */
-
   coinTimer += dt;
 
   if(
-    coinTimer > 80
+    spawnTimer >
+    55
   ){
 
-    spawnCoinLine();
+    createObstacle();
 
-    coinTimer = 0;
+    spawnTimer=0;
+
+  }
+
+  if(
+    coinTimer >
+    75
+  ){
+
+    createCoins();
+
+    coinTimer=0;
 
   }
 
 
   /*
-    Move obstacles.
+    Collision.
   */
-
-  obstacles.forEach(
-    obstacle => {
-
-      obstacle.z +=
-        speed * dt;
-
-    }
-  );
-
-
-  /*
-    Move coins.
-  */
-
-  coins.forEach(
-    coin => {
-
-      coin.z +=
-        speed * dt;
-
-    }
-  );
-
-
-  checkCollisions();
-
-
-  /*
-    Remove objects
-    after passing player.
-  */
-
-  obstacles =
-    obstacles.filter(
-      obstacle =>
-        obstacle.z < 115
-    );
-
-  coins =
-    coins.filter(
-      coin =>
-        coin.z < 115
-    );
-
-
-  updateHUD();
-
-}
-
-
-/* =====================================================
-   COLLISION
-===================================================== */
-
-function checkCollisions(){
-
-  /*
-    Player is near z = 90.
-  */
-
-  const playerZ = 90;
-
 
   for(
-    const obstacle of obstacles
+    const obstacle of objects
   ){
 
     if(
-      Math.abs(
-        obstacle.z -
-        playerZ
-      ) < 8 &&
-
-      obstacle.lane ===
-      player.targetLane
+      collision(
+        player,
+        obstacle
+      )
     ){
 
-      /*
-        Jumping avoids
-        normal obstacles.
-      */
+      endGame();
 
-      if(
-        player.jumpY < 35
-      ){
-
-        endGame();
-
-        return;
-
-      }
+      return;
 
     }
 
@@ -1263,27 +1193,30 @@ function checkCollisions(){
   */
 
   for(
-    const coin of coins
+    const coin of coinObjects
   ){
 
     if(
-      !coin.collected &&
+      !coin.userData.collected &&
+      Math.abs(
+        player.position.x -
+        coin.position.x
+      )<1 &&
 
       Math.abs(
-        coin.z -
-        playerZ
-      ) < 10 &&
+        player.position.z -
+        coin.position.z
+      )<1.4 &&
 
-      coin.lane ===
-      player.targetLane
+      Math.abs(
+        player.position.y -
+        coin.position.y
+      )<1.5
     ){
 
-      /*
-        Coins can be collected
-        while jumping too.
-      */
+      coin.userData.collected=true;
 
-      coin.collected = true;
+      coin.visible=false;
 
       runCoins++;
 
@@ -1295,49 +1228,56 @@ function checkCollisions(){
 
   }
 
-}
+
+  /*
+    Cleanup.
+  */
+
+  objects =
+    objects.filter(
+      object=>{
+
+        if(
+          object.position.z>15
+        ){
+
+          scene.remove(object);
+
+          return false;
+
+        }
+
+        return true;
+
+      }
+    );
 
 
-/* =====================================================
-   END GAME
-===================================================== */
+  coinObjects =
+    coinObjects.filter(
+      coin=>{
 
-function endGame(){
+        if(
+          coin.position.z>15
+        ){
 
-  running = false;
+          scene.remove(coin);
 
-  gameOver = true;
+          return false;
 
-  if(
-    score >
-    save.bestScore
-  ){
+        }
 
-    save.bestScore =
-      score;
+        return true;
 
-  }
+      }
+    );
 
-  saveGame();
 
-  document.getElementById(
-    "finalScore"
-  ).innerText =
-    score;
+  score +=
+    gameSpeed*dt*.8;
 
-  document.getElementById(
-    "finalCoins"
-  ).innerText =
-    runCoins;
 
-  document.getElementById(
-    "finalBest"
-  ).innerText =
-    save.bestScore;
-
-  document
-    .getElementById("gameOver")
-    .classList.remove("hidden");
+  updateHUD();
 
 }
 
@@ -1349,837 +1289,172 @@ function endGame(){
 function updateHUD(){
 
   document.getElementById(
-    "coinsText"
-  ).innerText =
+    "coins"
+  ).textContent =
     runCoins;
 
   document.getElementById(
-    "scoreText"
-  ).innerText =
-    score;
+    "score"
+  ).textContent =
+    Math.floor(score);
 
   document.getElementById(
-    "speedText"
-  ).innerText =
+    "speed"
+  ).textContent =
     (
-      speed / 7
+      gameSpeed/.42
     ).toFixed(1);
 
 }
 
 
-function updateMenu(){
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function loop(time){
+
+  if(!running)
+    return;
+
+  const dt =
+    Math.min(
+      time-lastTime,
+      40
+    );
+
+  lastTime=time;
+
+  update(dt);
+
+  camera.lookAt(
+    player.position.x*.35,
+    1.5,
+    -12
+  );
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+  requestAnimationFrame(
+    loop
+  );
+
+}
+
+
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+function endGame(){
+
+  running=false;
+
+  const finalScore =
+    Math.floor(score);
+
+  if(
+    finalScore >
+    save.best
+  ){
+
+    save.best =
+      finalScore;
+
+  }
+
+  saveGame();
+
+  document.getElementById(
+    "finalScore"
+  ).textContent =
+    finalScore;
+
+  document.getElementById(
+    "finalCoins"
+  ).textContent =
+    runCoins;
+
+  document.getElementById(
+    "finalBest"
+  ).textContent =
+    save.best;
+
+  document
+    .getElementById("gameOver")
+    .classList.remove("hidden");
+
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function showMenu(){
+
+  running=false;
+
+  document
+    .getElementById("gameOver")
+    .classList.add("hidden");
+
+  document
+    .getElementById("menu")
+    .classList.remove("hidden");
 
   document.getElementById(
     "menuCoins"
-  ).innerText =
+  ).textContent =
     save.coins;
 
   document.getElementById(
-    "menuBest"
-  ).innerText =
-    save.bestScore;
-
-}
-
-
-updateMenu();
-
-
-/* =====================================================
-   DRAW BACKGROUND
-===================================================== */
-
-function draw(){
-
-  ctx.clearRect(
-    0,
-    0,
-    W,
-    H
-  );
-
-
-  /*
-    Sky.
-  */
-
-  const sky =
-    ctx.createLinearGradient(
-      0,
-      0,
-      0,
-      H
-    );
-
-  sky.addColorStop(
-    0,
-    "#05051c"
-  );
-
-  sky.addColorStop(
-    .45,
-    "#101040"
-  );
-
-  sky.addColorStop(
-    1,
-    "#020208"
-  );
-
-  ctx.fillStyle =
-    sky;
-
-  ctx.fillRect(
-    0,
-    0,
-    W,
-    H
-  );
-
-
-  drawMoon();
-
-  drawBuildings();
-
-  drawRoad();
-
-  drawObjects();
-
-  drawPlayer();
+    "best"
+  ).textContent =
+    save.best;
 
 }
 
 
 /* =====================================================
-   MOON
+   RESIZE
 ===================================================== */
 
-function drawMoon(){
+window.addEventListener(
+  "resize",
+  ()=>{
 
-  ctx.beginPath();
+    camera.aspect =
+      window.innerWidth /
+      window.innerHeight;
 
-  ctx.arc(
-    W*.75,
-    H*.14,
-    35,
-    0,
-    Math.PI*2
-  );
+    camera.updateProjectionMatrix();
 
-  ctx.fillStyle =
-    "#d9f5ff";
-
-  ctx.shadowBlur =
-    30;
-
-  ctx.shadowColor =
-    "#00eaff";
-
-  ctx.fill();
-
-  ctx.shadowBlur =
-    0;
-
-}
-
-
-/* =====================================================
-   BUILDINGS
-===================================================== */
-
-function drawBuildings(){
-
-  const base =
-    roadTop();
-
-  ctx.fillStyle =
-    "#080817";
-
-  for(
-    let i=0;
-    i<10;
-    i++
-  ){
-
-    const width =
-      45 +
-      (i%3)*25;
-
-    const height =
-      70 +
-      (i%4)*45;
-
-    const x =
-      i*65 -
-      (roadOffset*.15 %
-       (W+100));
-
-    ctx.fillRect(
-      x,
-      base-height,
-      width,
-      height
+    renderer.setSize(
+      window.innerWidth,
+      window.innerHeight
     );
 
   }
-
-}
-
-
-/* =====================================================
-   ROAD
-===================================================== */
-
-function drawRoad(){
-
-  const top =
-    roadTop();
-
-  const bottom =
-    H;
-
-  const topWidth =
-    Math.min(
-      W*.55,
-      330
-    );
-
-  const bottomWidth =
-    Math.min(
-      W*.95,
-      560
-    );
-
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    (W-topWidth)/2,
-    top
-  );
-
-  ctx.lineTo(
-    (W+topWidth)/2,
-    top
-  );
-
-  ctx.lineTo(
-    (W+bottomWidth)/2,
-    bottom
-  );
-
-  ctx.lineTo(
-    (W-bottomWidth)/2,
-    bottom
-  );
-
-  ctx.closePath();
-
-  ctx.fillStyle =
-    "#141421";
-
-  ctx.fill();
-
-
-  /*
-    Road edges.
-  */
-
-  ctx.strokeStyle =
-    "#00aaff";
-
-  ctx.lineWidth = 3;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    (W-topWidth)/2,
-    top
-  );
-
-  ctx.lineTo(
-    (W-bottomWidth)/2,
-    bottom
-  );
-
-  ctx.moveTo(
-    (W+topWidth)/2,
-    top
-  );
-
-  ctx.lineTo(
-    (W+bottomWidth)/2,
-    bottom
-  );
-
-  ctx.stroke();
-
-
-  /*
-    Lane markings.
-  */
-
-  for(
-    let lane = 1;
-    lane <= 2;
-    lane++
-  ){
-
-    for(
-      let i=0;
-      i<12;
-      i++
-    ){
-
-      let y =
-        top +
-        (
-          (
-            i*100 +
-            roadOffset*3
-          ) %
-          (H-top+100)
-        );
-
-      const t =
-        (y-top) /
-        (H-top);
-
-      const topX =
-        W/2 +
-        (lane-1.5) *
-        topWidth/3;
-
-      const bottomX =
-        W/2 +
-        (lane-1.5) *
-        bottomWidth/3;
-
-      const x =
-        topX +
-        (bottomX-topX)*t;
-
-      const size =
-        5 +
-        18*t;
-
-      ctx.fillStyle =
-        "rgba(0,180,255,.65)";
-
-      ctx.fillRect(
-        x-size/2,
-        y,
-        size,
-        5+12*t
-      );
-
-    }
-
-  }
-
-}
-
-
-/* =====================================================
-   DRAW OBJECTS
-===================================================== */
-
-function objectPosition(
-  lane,
-  z
-){
-
-  /*
-    z:
-    0 = horizon
-    100 = player
-  */
-
-  const t =
-    Math.max(
-      0,
-      Math.min(
-        1,
-        z/100
-      )
-    );
-
-  const y =
-    roadTop() +
-    (
-      H-roadTop()
-    ) * t;
-
-  return {
-
-    x:
-      laneX(
-        lane,
-        y
-      ),
-
-    y:y,
-
-    scale:
-      .25 +
-      t*.9
-
-  };
-
-}
-
-
-/* =====================================================
-   OBSTACLES
-===================================================== */
-
-function drawObjects(){
-
-  obstacles.forEach(
-    obstacle => {
-
-      const p =
-        objectPosition(
-          obstacle.lane,
-          obstacle.z
-        );
-
-      const width =
-        45*p.scale;
-
-      const height =
-        45*p.scale;
-
-      ctx.save();
-
-      ctx.translate(
-        p.x,
-        p.y
-      );
-
-      if(
-        obstacle.type ===
-        "barrier"
-      ){
-
-        ctx.fillStyle =
-          "#ff3344";
-
-        ctx.fillRect(
-          -width/2,
-          -height,
-          width,
-          height
-        );
-
-        ctx.fillStyle =
-          "#111";
-
-        ctx.fillRect(
-          -width/2,
-          -height*.75,
-          width,
-          height*.15
-        );
-
-        ctx.fillRect(
-          -width/2,
-          -height*.35,
-          width,
-          height*.15
-        );
-
-      }else{
-
-        ctx.fillStyle =
-          "#7733ff";
-
-        ctx.shadowBlur =
-          15;
-
-        ctx.shadowColor =
-          "#aa44ff";
-
-        ctx.fillRect(
-          -width/2,
-          -height,
-          width,
-          height
-        );
-
-        ctx.shadowBlur =
-          0;
-
-      }
-
-      ctx.restore();
-
-    }
-  );
-
-
-  /*
-    Coins.
-  */
-
-  coins.forEach(
-    coin => {
-
-      if(
-        coin.collected
-      )
-        return;
-
-      const p =
-        objectPosition(
-          coin.lane,
-          coin.z
-        );
-
-      const radius =
-        9*p.scale;
-
-      ctx.beginPath();
-
-      ctx.arc(
-        p.x,
-        p.y-heightOffset(),
-        radius,
-        0,
-        Math.PI*2
-      );
-
-      ctx.fillStyle =
-        "#ffd700";
-
-      ctx.shadowBlur =
-        15;
-
-      ctx.shadowColor =
-        "#ffcc00";
-
-      ctx.fill();
-
-      ctx.shadowBlur =
-        0;
-
-    }
-  );
-
-}
-
-
-function heightOffset(){
-
-  return 20;
-
-}
-
-
-/* =====================================================
-   PLAYER
-===================================================== */
-
-function drawPlayer(){
-
-  const groundY =
-    H*.82;
-
-  const y =
-    groundY -
-    player.jumpY;
-
-
-  ctx.save();
-
-  ctx.translate(
-    player.x,
-    y
-  );
-
-
-  /*
-    Shadow underneath player.
-  */
-
-  ctx.beginPath();
-
-  ctx.ellipse(
-    0,
-    4,
-    25,
-    8,
-    0,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fillStyle =
-    "rgba(0,0,0,.5)";
-
-  ctx.fill();
-
-
-  /*
-    Character colors.
-  */
-
-  let bodyColor =
-    "#00aaff";
-
-  if(
-    selectedCharacter ===
-    "blaze"
-  ){
-
-    bodyColor =
-      "#ff5533";
-
-  }
-
-  if(
-    selectedCharacter ===
-    "shadow"
-  ){
-
-    bodyColor =
-      "#9922ff";
-
-  }
-
-
-  /*
-    Head.
-  */
-
-  ctx.beginPath();
-
-  ctx.arc(
-    0,
-    -55,
-    13,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fillStyle =
-    "#e6c2a5";
-
-  ctx.fill();
-
-
-  /*
-    Hair.
-  */
-
-  ctx.beginPath();
-
-  ctx.arc(
-    0,
-    -59,
-    14,
-    Math.PI,
-    Math.PI*2
-  );
-
-  ctx.fillStyle =
-    "#111";
-
-  ctx.fill();
-
-
-  /*
-    Body.
-  */
-
-  ctx.fillStyle =
-    bodyColor;
-
-  ctx.fillRect(
-    -13,
-    -42,
-    26,
-    32
-  );
-
-
-  /*
-    Arms.
-  */
-
-  ctx.strokeStyle =
-    bodyColor;
-
-  ctx.lineWidth =
-    7;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    -12,
-    -37
-  );
-
-  ctx.lineTo(
-    -25,
-    -18
-  );
-
-  ctx.moveTo(
-    12,
-    -37
-  );
-
-  ctx.lineTo(
-    25,
-    -18
-  );
-
-  ctx.stroke();
-
-
-  /*
-    Legs.
-  */
-
-  ctx.strokeStyle =
-    "#202030";
-
-  ctx.lineWidth =
-    9;
-
-  ctx.beginPath();
-
-  ctx.moveTo(
-    -7,
-    -10
-  );
-
-  ctx.lineTo(
-    -12,
-    12
-  );
-
-  ctx.moveTo(
-    7,
-    -10
-  );
-
-  ctx.lineTo(
-    12,
-    12
-  );
-
-  ctx.stroke();
-
-
-  /*
-    Skates.
-  */
-
-  if(
-    movement ===
-    "skate"
-  ){
-
-    ctx.fillStyle =
-      "#00eaff";
-
-    ctx.fillRect(
-      -20,
-      9,
-      15,
-      5
-    );
-
-    ctx.fillRect(
-      5,
-      9,
-      15,
-      5
-    );
-
-    ctx.fillStyle =
-      "#222";
-
-    ctx.beginPath();
-
-    ctx.arc(
-      -15,
-      16,
-      4,
-      0,
-      Math.PI*2
-    );
-
-    ctx.arc(
-      15,
-      16,
-      4,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-  }
-
-
-  /*
-    Shadow aura.
-  */
-
-  if(
-    selectedCharacter ===
-    "shadow"
-  ){
-
-    ctx.beginPath();
-
-    ctx.arc(
-      0,
-      -30,
-      35,
-      0,
-      Math.PI*2
-    );
-
-    ctx.strokeStyle =
-      "rgba(150,50,255,.45)";
-
-    ctx.lineWidth =
-      3;
-
-    ctx.stroke();
-
-  }
-
-
-  ctx.restore();
-
-}
-
-
-/* =====================================================
-   PREVENT SCROLLING
-===================================================== */
-
-document.addEventListener(
-  "touchmove",
-  function(e){
-
-    if(running){
-
-      e.preventDefault();
-
-    }
-
-  },
-  {passive:false}
 );
+
+
+/* Initial menu */
+
+document.getElementById(
+  "menuCoins"
+).textContent =
+  save.coins;
+
+document.getElementById(
+  "best"
+).textContent =
+  save.best;
 
 </script>
 
 </body>
-                                    </html>
+        </html>
