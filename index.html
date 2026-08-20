@@ -3,268 +3,689 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width,initial-scale=1.0,
-      maximum-scale=1.0,user-scalable=no">
+      content="width=device-width,initial-scale=1.0,user-scalable=no">
 
 <title>Shadow Rush</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  user-select:none;
-  -webkit-user-select:none;
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#02030a;
-  font-family:Arial,sans-serif;
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #02030a;
+  font-family: Arial, sans-serif;
+  color: white;
+  touch-action: none;
 }
 
-#game{
-  position:fixed;
-  inset:0;
-}
-
-canvas{
-  display:block;
-}
-
-#hud{
-  position:fixed;
-  top:12px;
-  left:50%;
-  transform:translateX(-50%);
-  width:94%;
-  max-width:500px;
-  display:flex;
-  justify-content:space-between;
-  z-index:5;
-  pointer-events:none;
-}
-
-.stat{
-  background:rgba(0,0,0,.65);
-  border:2px solid #00eaff;
-  border-radius:10px;
-  padding:8px 12px;
-  color:#fff;
-  font-weight:bold;
-  text-shadow:0 0 8px #00eaff;
-}
-
-#menu,
-#gameOver{
-  position:fixed;
-  inset:0;
-  z-index:20;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+#game {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
   background:
-    radial-gradient(circle,#11174d,#03040b 70%);
+    linear-gradient(
+      #07122b 0%,
+      #101b3c 42%,
+      #111 43%,
+      #070707 100%
+    );
 }
 
-.panel{
-  width:90%;
-  max-width:400px;
-  padding:28px;
-  text-align:center;
-  border:2px solid #00eaff;
-  border-radius:20px;
-  background:rgba(3,5,18,.94);
-  box-shadow:0 0 35px #005eff;
-  color:white;
+/* SKY */
+.skyGlow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: #643cff;
+  opacity: .25;
+  filter: blur(45px);
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-h1{
-  color:#00eaff;
-  font-size:34px;
-  text-shadow:0 0 18px #00aaff;
-  margin-bottom:12px;
+/* WORLD */
+#world {
+  position: absolute;
+  inset: 0;
+  perspective: 650px;
+  overflow: hidden;
 }
 
-h2{
-  color:#ff416c;
+.road {
+  position: absolute;
+  width: 58%;
+  height: 150%;
+  left: 21%;
+  top: 35%;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #161622 0px,
+      #161622 70px,
+      #202030 71px,
+      #202030 140px
+    );
+  transform:
+    perspective(500px)
+    rotateX(62deg);
+  transform-origin: center top;
+  box-shadow:
+    0 0 40px #000 inset;
 }
 
-button{
-  padding:13px 22px;
-  margin:7px;
-  border:2px solid #00cfff;
-  border-radius:11px;
-  background:#070b20;
-  color:#00eaff;
-  font-size:16px;
-  font-weight:bold;
+.laneLine {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  top: 0;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.7) 0px,
+      rgba(255,255,255,.7) 45px,
+      transparent 45px,
+      transparent 90px
+    );
 }
 
-.hidden{
-  display:none!important;
+.laneLine.left {
+  left: 33.33%;
 }
 
-.info{
-  margin:14px 0;
-  line-height:1.7;
+.laneLine.right {
+  left: 66.66%;
 }
 
-.small{
-  color:#aaa;
-  font-size:13px;
-  margin-top:15px;
-}
-      #menu,
-#gameOver {
-  pointer-events: auto;
+.groundSide {
+  position: absolute;
+  top: 42%;
+  width: 21%;
+  height: 100%;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #063b23 0px,
+      #063b23 80px,
+      #07512d 80px,
+      #07512d 160px
+    );
 }
 
-#menu button,
-#gameOver button {
-  position: relative;
+.groundSide.left {
+  left: 0;
+  transform: skewY(12deg);
+}
+
+.groundSide.right {
+  right: 0;
+  transform: skewY(-12deg);
+}
+
+/* WORLD OBJECTS */
+.worldObject {
+  position: absolute;
+  z-index: 10;
+  transform-origin: center bottom;
+  will-change: transform, left, top;
+}
+
+.coin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fff4a0 0 15%, #ffd21f 16% 55%, #b87500 56%);
+  border: 3px solid #fff1a0;
+  box-shadow: 0 0 18px #ffc400;
+}
+
+.obstacle {
+  width: 60px;
+  height: 70px;
+  background:
+    linear-gradient(
+      90deg,
+      #252532,
+      #55556a,
+      #171722
+    );
+  border: 3px solid #ff3b6b;
+  border-radius: 10px 10px 4px 4px;
+  box-shadow: 0 0 18px rgba(255,0,90,.5);
+}
+
+.obstacle::before {
+  content: "⚠";
+  position: absolute;
+  font-size: 30px;
+  top: 15px;
+  left: 12px;
+}
+
+.barrier {
+  width: 125px;
+  height: 30px;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      #ff314f 0 15px,
+      #ffe24a 15px 30px
+    );
+  border: 3px solid #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 15px #ff3155;
+}
+
+.powerup {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  background: radial-gradient(circle,#fff,#6c4cff 45%,#2600a8);
+  box-shadow: 0 0 25px #7655ff;
+}
+
+.coinPower {
+  background: radial-gradient(circle,#fff,#ffd000 45%,#a85e00);
+}
+
+/* PLAYER */
+#player {
+  position: absolute;
+  width: 58px;
+  height: 92px;
+  left: 50%;
+  bottom: 13%;
+  transform: translateX(-50%);
   z-index: 100;
+  transition: left .13s ease;
+}
+
+.playerBody {
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  width: 38px;
+  height: 55px;
+  border-radius: 18px 18px 10px 10px;
+  background:
+    linear-gradient(135deg,#111,#6c20ff,#151020);
+  border: 2px solid #9e5cff;
+  box-shadow: 0 0 25px #7b29ff;
+}
+
+.playerHead {
+  position: absolute;
+  left: 14px;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #16131e;
+  border: 2px solid #b86cff;
+  box-shadow: 0 0 15px #a33dff;
+}
+
+.playerEye {
+  position: absolute;
+  width: 8px;
+  height: 4px;
+  background: #00eaff;
+  top: 12px;
+  left: 7px;
+  border-radius: 5px;
+  box-shadow: 12px 0 #00eaff;
+}
+
+.playerLeg {
+  position: absolute;
+  width: 10px;
+  height: 25px;
+  background: #171322;
+  border: 2px solid #7935bb;
+  bottom: 0;
+}
+
+.playerLeg.one {
+  left: 12px;
+}
+
+.playerLeg.two {
+  right: 12px;
+}
+
+.playerShadow {
+  position: absolute;
+  width: 75px;
+  height: 18px;
+  background: #000;
+  opacity: .65;
+  border-radius: 50%;
+  bottom: -8px;
+  left: -8px;
+  filter: blur(4px);
+}
+
+/* UI */
+#topUI {
+  position: absolute;
+  z-index: 500;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.uiBox {
+  min-width: 90px;
+  padding: 8px 10px;
+  background: rgba(5,5,20,.78);
+  border: 1px solid #743cff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(100,40,255,.4);
+  text-align: center;
+}
+
+.uiLabel {
+  font-size: 10px;
+  color: #aaa;
+}
+
+.uiValue {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+/* SCREENS */
+.screen {
+  position: absolute;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(53,18,110,.35),
+      rgba(0,0,0,.96)
+    );
+}
+
+.panel {
+  width: 100%;
+  max-width: 390px;
+  padding: 30px 20px;
+  text-align: center;
+  background: rgba(7,7,20,.94);
+  border: 2px solid #733cff;
+  border-radius: 22px;
+  box-shadow:
+    0 0 45px rgba(108,45,255,.5);
+}
+
+.logo {
+  font-size: 42px;
+  font-weight: 900;
+  color: #b56cff;
+  text-shadow:
+    0 0 10px #762cff,
+    0 0 30px #762cff;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #aaa;
+  letter-spacing: 4px;
+  margin-bottom: 30px;
+}
+
+.menuButton {
+  width: 90%;
+  padding: 14px;
+  margin: 8px auto;
+  border: 2px solid #783dff;
+  border-radius: 12px;
+  background: #0d0920;
+  color: #d4b5ff;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.menuButton:active {
+  transform: scale(.96);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* MOBILE CONTROLS */
+#controls {
+  position: absolute;
+  z-index: 600;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+.controlButton {
+  width: 72px;
+  height: 55px;
+  border-radius: 15px;
+  border: 2px solid rgba(150,100,255,.8);
+  background: rgba(10,5,30,.65);
+  color: white;
+  font-size: 25px;
   pointer-events: auto;
-  touch-action: manipulation;
+}
+
+.centerControls {
+  display: flex;
+  gap: 8px;
+}
+
+/* POWERUP MESSAGE */
+#powerMessage {
+  position: absolute;
+  z-index: 700;
+  top: 95px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 0 12px #9b5cff;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+/* MISSION */
+.mission {
+  margin: 15px 0;
+  padding: 12px;
+  border: 1px solid #5430a5;
+  border-radius: 10px;
+  text-align: left;
+  color: #ddd;
 }
 </style>
 </head>
 
 <body>
 
-<div id="game"></div>
+<div id="game">
 
-<div id="hud">
+  <div class="skyGlow"></div>
 
-  <div class="stat">
-    🪙 <span id="coins">0</span>
+  <div id="world">
+
+    <div class="groundSide left"></div>
+    <div class="groundSide right"></div>
+
+    <div class="road">
+      <div class="laneLine left"></div>
+      <div class="laneLine right"></div>
+    </div>
+
   </div>
 
-  <div class="stat">
-    🏆 <span id="score">0</span>
+  <div id="player">
+
+    <div class="playerHead">
+      <div class="playerEye"></div>
+    </div>
+
+    <div class="playerBody"></div>
+
+    <div class="playerLeg one"></div>
+    <div class="playerLeg two"></div>
+
+    <div class="playerShadow"></div>
+
   </div>
 
-  <div class="stat">
-    ⚡ <span id="speed">1.0</span>
+
+  <div id="topUI">
+
+    <div class="uiBox">
+      <div class="uiLabel">SCORE</div>
+      <div class="uiValue" id="score">0</div>
+    </div>
+
+    <div class="uiBox">
+      <div class="uiLabel">MULTIPLIER</div>
+      <div class="uiValue" id="multiplier">x1</div>
+    </div>
+
+    <div class="uiBox">
+      <div class="uiLabel">COINS</div>
+      <div class="uiValue" id="coins">0</div>
+    </div>
+
   </div>
 
-</div>
+
+  <div id="powerMessage"></div>
 
 
-<div id="menu">
+  <div id="controls">
 
-  <div class="panel">
+    <button class="controlButton"
+            id="leftButton">
+      ◀
+    </button>
 
-    <h1>🌑 SHADOW RUSH</h1>
+    <div class="centerControls">
+      <button class="controlButton"
+              id="jumpButton">
+        ▲
+      </button>
 
-    <p>
-      THE ENDLESS RUN BEGINS
-    </p>
+      <button class="controlButton"
+              id="slideButton">
+        ▼
+      </button>
+    </div>
 
-    <div class="info">
+    <button class="controlButton"
+            id="rightButton">
+      ▶
+    </button>
 
-      🏃 Run automatically<br>
-      👈 Swipe left<br>
-      👉 Swipe right<br>
-      👆 Swipe up to jump<br>
-      👇 Swipe down to slide
+  </div>
+
+
+  <!-- LOADING -->
+
+  <div id="loadingScreen" class="screen">
+
+    <div class="panel">
+
+      <div class="logo">SHADOW RUSH</div>
+
+      <p class="subtitle">SYSTEM INITIALIZING...</p>
+
+      <p id="loadingText">
+        Loading Shadow World...
+      </p>
 
     </div>
 
-    <p>
-      Total Coins:
-      <strong id="menuCoins">0</strong>
-    </p>
+  </div>
 
-    <p>
-      Best Score:
-      <strong id="best">0</strong>
-    </p>
 
-    <button onclick="startGame()">
-      ▶ START RUN
-    </button>
+  <!-- MENU -->
 
-    <p class="small">
-      No buttons are needed during gameplay.
-    </p>
+  <div id="menuScreen" class="screen hidden">
+
+    <div class="panel">
+
+      <div class="logo">SHADOW RUSH</div>
+
+      <div class="subtitle">
+        RUN BEYOND YOUR LIMITS
+      </div>
+
+      <p>
+        🪙 Coins:
+        <strong id="menuCoins">0</strong>
+      </p>
+
+      <p>
+        🏆 Best Score:
+        <strong id="menuBest">0</strong>
+      </p>
+
+      <button class="menuButton"
+              id="startButton">
+        ⚔️ START RUN
+      </button>
+
+      <button class="menuButton"
+              id="missionButton">
+        🎯 MISSIONS
+      </button>
+
+      <button class="menuButton"
+              id="resetButton">
+        ♻️ RESET SAVE
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- MISSION SCREEN -->
+
+  <div id="missionScreen" class="screen hidden">
+
+    <div class="panel">
+
+      <div class="logo"
+           style="font-size:32px;">
+        MISSIONS
+      </div>
+
+      <div class="mission">
+        🪙 Collect 25 coins<br>
+        <span id="missionCoins">0 / 25</span>
+      </div>
+
+      <div class="mission">
+        🏃 Reach 2,000 score<br>
+        <span id="missionScore">0 / 2000</span>
+      </div>
+
+      <div class="mission">
+        ⚡ Collect 3 power-ups<br>
+        <span id="missionPower">0 / 3</span>
+      </div>
+
+      <button class="menuButton"
+              id="missionBack">
+        ↩ BACK
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- GAME OVER -->
+
+  <div id="gameOverScreen"
+       class="screen hidden">
+
+    <div class="panel">
+
+      <div class="logo"
+           style="font-size:34px;">
+        RUN OVER
+      </div>
+
+      <h2 id="finalScore">
+        SCORE: 0
+      </h2>
+
+      <p>
+        🪙 Coins:
+        <strong id="finalCoins">0</strong>
+      </p>
+
+      <p>
+        🏆 Best:
+        <strong id="finalBest">0</strong>
+      </p>
+
+      <button class="menuButton"
+              id="retryButton">
+        ⚔️ RUN AGAIN
+      </button>
+
+      <button class="menuButton"
+              id="homeButton">
+        🏠 MAIN MENU
+      </button>
+
+    </div>
 
   </div>
 
 </div>
 
-
-<div id="gameOver" class="hidden">
-
-  <div class="panel">
-
-    <h2>RUN OVER</h2>
-
-    <br>
-
-    <p>
-      Score:
-      <strong id="finalScore">0</strong>
-    </p>
-
-    <p>
-      Coins:
-      <strong id="finalCoins">0</strong>
-    </p>
-
-    <p>
-      Best:
-      <strong id="finalBest">0</strong>
-    </p>
-
-    <br>
-
-    <button onclick="startGame()">
-      🔄 RUN AGAIN
-    </button>
-
-    <button onclick="showMenu()">
-      🏠 MENU
-    </button>
-
-  </div>
-
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
 
 <script>
 
 /* =====================================================
-   SAVE
+   SAVE DATA
 ===================================================== */
 
-const SAVE_KEY =
-  "shadowRush3D";
+const SAVE_KEY = "shadowRushSave_v1";
 
 let save = {
-  coins:0,
-  best:0
+  coins: 0,
+  bestScore: 0
 };
 
-try{
+function loadSave() {
 
-  const old =
-    localStorage.getItem(SAVE_KEY);
+  try {
 
-  if(old){
-    save = {
-      ...save,
-      ...JSON.parse(old)
-    };
+    const data =
+      localStorage.getItem(SAVE_KEY);
+
+    if (data) {
+      save = {
+        ...save,
+        ...JSON.parse(data)
+      };
+    }
+
+  } catch (error) {
+    console.log("Save error:", error);
   }
 
-}catch(e){}
+}
 
-function saveGame(){
+function saveGame() {
 
   localStorage.setItem(
     SAVE_KEY,
@@ -275,397 +696,7 @@ function saveGame(){
 
 
 /* =====================================================
-   THREE.JS
-===================================================== */
-
-const container =
-  document.getElementById("game");
-
-const scene =
-  new THREE.Scene();
-
-scene.background =
-  new THREE.Color(0x030617);
-
-scene.fog =
-  new THREE.Fog(
-    0x030617,
-    35,
-    180
-  );
-
-
-const camera =
-  new THREE.PerspectiveCamera(
-    65,
-    window.innerWidth /
-    window.innerHeight,
-    .1,
-    500
-  );
-
-camera.position.set(
-  0,
-  4.5,
-  8
-);
-
-
-const renderer =
-  new THREE.WebGLRenderer({
-    antialias:true
-  });
-
-renderer.setPixelRatio(
-  Math.min(
-    window.devicePixelRatio,
-    2
-  )
-);
-
-renderer.setSize(
-  window.innerWidth,
-  window.innerHeight
-);
-
-container.appendChild(
-  renderer.domElement
-);
-
-
-/* =====================================================
-   LIGHTING
-===================================================== */
-
-const ambient =
-  new THREE.HemisphereLight(
-    0x88aaff,
-    0x080810,
-    1.5
-  );
-
-scene.add(ambient);
-
-
-const moonLight =
-  new THREE.DirectionalLight(
-    0x99bbff,
-    1.4
-  );
-
-moonLight.position.set(
-  -20,
-  30,
-  20
-);
-
-scene.add(moonLight);
-
-
-/* =====================================================
-   WORLD
-===================================================== */
-
-const roadLength = 220;
-
-const road =
-  new THREE.Mesh(
-    new THREE.BoxGeometry(
-      12,
-      .2,
-      roadLength
-    ),
-    new THREE.MeshStandardMaterial({
-      color:0x111522
-    })
-  );
-
-road.position.set(
-  0,
-  0,
-  -70
-);
-
-scene.add(road);
-
-
-/* Lane lines */
-
-const laneMaterial =
-  new THREE.MeshBasicMaterial({
-    color:0x00bfff
-  });
-
-for(let lane=-1;lane<=1;lane+=2){
-
-  const line =
-    new THREE.Mesh(
-      new THREE.BoxGeometry(
-        .08,
-        .03,
-        roadLength
-      ),
-      laneMaterial
-    );
-
-  line.position.set(
-    lane*2,
-    .13,
-    -70
-  );
-
-  scene.add(line);
-
-}
-
-
-/* =====================================================
-   SIDE BUILDINGS
-===================================================== */
-
-const buildings = [];
-
-function createBuildings(){
-
-  for(let i=0;i<35;i++){
-
-    const height =
-      4 + Math.random()*12;
-
-    const width =
-      3 + Math.random()*5;
-
-    const depth =
-      4 + Math.random()*8;
-
-    const material =
-      new THREE.MeshStandardMaterial({
-        color:
-          Math.random() > .5
-            ? 0x101633
-            : 0x171126
-      });
-
-    const building =
-      new THREE.Mesh(
-        new THREE.BoxGeometry(
-          width,
-          height,
-          depth
-        ),
-        material
-      );
-
-    const side =
-      i%2===0
-        ? -1
-        : 1;
-
-    building.position.set(
-      side*(9+Math.random()*8),
-      height/2,
-      -i*7-10
-    );
-
-    scene.add(building);
-
-    buildings.push(building);
-
-  }
-
-}
-
-createBuildings();
-
-
-/* =====================================================
-   PLAYER
-===================================================== */
-
-const player =
-  new THREE.Group();
-
-scene.add(player);
-
-player.position.set(
-  0,
-  1.1,
-  4
-);
-
-
-/* Body */
-
-const body =
-  new THREE.Mesh(
-    new THREE.BoxGeometry(
-      .75,
-      1.15,
-      .45
-    ),
-    new THREE.MeshStandardMaterial({
-      color:0x00aaff
-    })
-  );
-
-body.position.y =
-  0;
-
-player.add(body);
-
-
-/* Head */
-
-const head =
-  new THREE.Mesh(
-    new THREE.SphereGeometry(
-      .32,
-      16,
-      16
-    ),
-    new THREE.MeshStandardMaterial({
-      color:0xd9ad91
-    })
-  );
-
-head.position.y =
-  .85;
-
-player.add(head);
-
-
-/* Hair */
-
-const hair =
-  new THREE.Mesh(
-    new THREE.SphereGeometry(
-      .34,
-      16,
-      16,
-      0,
-      Math.PI*2,
-      0,
-      Math.PI/2
-    ),
-    new THREE.MeshStandardMaterial({
-      color:0x080808
-    })
-  );
-
-hair.position.y =
-  1.02;
-
-player.add(hair);
-
-
-/* Legs */
-
-const legMaterial =
-  new THREE.MeshStandardMaterial({
-    color:0x171c30
-  });
-
-const leftLeg =
-  new THREE.Mesh(
-    new THREE.BoxGeometry(
-      .22,
-      .75,
-      .25
-    ),
-    legMaterial
-  );
-
-leftLeg.position.set(
-  -.22,
-  -.9,
-  0
-);
-
-player.add(leftLeg);
-
-
-const rightLeg =
-  new THREE.Mesh(
-    new THREE.BoxGeometry(
-      .22,
-      .75,
-      .25
-    ),
-    legMaterial
-  );
-
-rightLeg.position.set(
-  .22,
-  -.9,
-  0
-);
-
-player.add(rightLeg);
-
-
-/* Arms */
-
-const armMaterial =
-  new THREE.MeshStandardMaterial({
-    color:0x00aaff
-  });
-
-const leftArm =
-  new THREE.Mesh(
-    new THREE.BoxGeometry(
-      .18,
-      .75,
-      .2
-    ),
-    armMaterial
-  );
-
-leftArm.position.set(
-  -.52,
-  -.05,
-  0
-);
-
-player.add(leftArm);
-
-
-const rightArm =
-  new THREE.Mesh(
-    new THREE.BoxGeometry(
-      .18,
-      .75,
-      .2
-    ),
-    armMaterial
-  );
-
-rightArm.position.set(
-  .52,
-  -.05,
-  0
-);
-
-player.add(rightArm);
-
-
-/* =====================================================
-   PLAYER STATE
-===================================================== */
-
-let lane = 0;
-let targetX = 0;
-
-let verticalVelocity = 0;
-let grounded = true;
-
-let sliding = false;
-let slideTimer = 0;
-
-const laneWidth = 2;
-
-
-/* =====================================================
-   GAME STATE
+   GAME VARIABLES
 ===================================================== */
 
 let running = false;
@@ -674,286 +705,321 @@ let score = 0;
 
 let runCoins = 0;
 
-let gameSpeed = .42;
+let multiplier = 1;
 
-let objects = [];
+let speed = 0.55;
 
-let coinObjects = [];
+let lane = 1;
+
+let targetLane = 1;
+
+let jumping = false;
+
+let sliding = false;
+
+let jumpTimer = 0;
+
+let slideTimer = 0;
 
 let spawnTimer = 0;
 
-let coinTimer = 0;
+let powerTimer = 0;
 
 let lastTime = 0;
 
+let objects = [];
+
+let powerMode = "";
+
+let powerTime = 0;
+
+let missionPowerCount = 0;
+
 
 /* =====================================================
-   OBSTACLE
+   DOM
 ===================================================== */
 
-function createObstacle(){
+const world =
+  document.getElementById("world");
 
-  const laneNumber =
-    Math.floor(
-      Math.random()*3
-    ) - 1;
+const player =
+  document.getElementById("player");
 
-  const obstacle =
-    new THREE.Mesh(
-      new THREE.BoxGeometry(
-        1.3,
-        1.2,
-        1.3
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0xff3155
-      })
-    );
 
-  obstacle.position.set(
-    laneNumber*laneWidth,
-    .6,
-    -100
-  );
+/* =====================================================
+   SCREENS
+===================================================== */
 
-  scene.add(obstacle);
+function showScreen(id) {
 
-  objects.push(
-    obstacle
-  );
+  document
+    .querySelectorAll(".screen")
+    .forEach(screen => {
+
+      screen.classList.add("hidden");
+
+    });
+
+  document
+    .getElementById(id)
+    .classList.remove("hidden");
+
+}
+
+function updateMenu() {
+
+  document.getElementById(
+    "menuCoins"
+  ).textContent =
+    save.coins.toLocaleString();
+
+  document.getElementById(
+    "menuBest"
+  ).textContent =
+    save.bestScore.toLocaleString();
 
 }
 
 
 /* =====================================================
-   COINS
+   LOADING
 ===================================================== */
 
-function createCoins(){
+setTimeout(() => {
 
-  const laneNumber =
-    Math.floor(
-      Math.random()*3
-    ) - 1;
+  document.getElementById(
+    "loadingText"
+  ).textContent =
+    "System Online...";
 
-  for(let i=0;i<6;i++){
+}, 700);
 
-    const coin =
-      new THREE.Mesh(
-        new THREE.TorusGeometry(
-          .25,
-          .08,
-          8,
-          16
-        ),
-        new THREE.MeshStandardMaterial({
-          color:0xffd700,
-          emissive:0x664400
-        })
-      );
+setTimeout(() => {
 
-    coin.rotation.x =
-      Math.PI/2;
+  loadSave();
 
-    coin.position.set(
-      laneNumber*laneWidth,
-      1.4,
-      -80-i*3
-    );
+  updateMenu();
 
-    scene.add(coin);
+  showScreen("menuScreen");
 
-    coinObjects.push(
-      coin
-    );
-
-  }
-
-}
+}, 1400);
 
 
 /* =====================================================
-   START
+   START GAME
 ===================================================== */
 
-function startGame(){
-
-  document.getElementById("menu")
-    .classList.add("hidden");
-
-  document.getElementById("gameOver")
-    .classList.add("hidden");
-
-  objects.forEach(o => scene.remove(o));
-  coinObjects.forEach(c => scene.remove(c));
-
-  objects = [];
-  coinObjects = [];
-
-  lane = 0;
-  targetX = 0;
-
-  player.position.set(0, 1.1, 4);
-
-  verticalVelocity = 0;
-  grounded = true;
-
-  sliding = false;
-  player.scale.y = 1;
+function startGame() {
 
   score = 0;
+
   runCoins = 0;
 
-  gameSpeed = .42;
+  multiplier = 1;
+
+  speed = 0.55;
+
+  lane = 1;
+
+  targetLane = 1;
+
+  jumping = false;
+
+  sliding = false;
+
+  powerMode = "";
+
+  powerTime = 0;
 
   spawnTimer = 0;
-  coinTimer = 0;
+
+  powerTimer = 0;
+
+  missionPowerCount = 0;
+
+  objects.forEach(
+    object => object.el.remove()
+  );
+
+  objects = [];
+
+  updatePlayerPosition();
+
+  updateUI();
 
   running = true;
 
-  lastTime = performance.now();
+  showScreen("gameScreen");
 
-  updateHUD();
+  document
+    .getElementById("gameOverScreen")
+    .classList.add("hidden");
 
-  requestAnimationFrame(loop);
-      }
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
 
 
 /* =====================================================
-   MOVEMENT
+   CREATE GAME SCREEN STATE
 ===================================================== */
 
-function moveLeft(){
+const gameScreen =
+  document.createElement("div");
 
-  if(!running) return;
+gameScreen.id = "gameScreen";
 
-  lane--;
+gameScreen.className =
+  "hidden";
 
-  if(lane < -1)
-    lane=-1;
+gameScreen.style.position =
+  "absolute";
 
-  targetX =
-    lane*laneWidth;
+gameScreen.style.inset = "0";
+
+gameScreen.style.zIndex = "1";
+
+document
+  .getElementById("game")
+  .appendChild(gameScreen);
+
+
+/* =====================================================
+   PLAYER LANE
+===================================================== */
+
+function updatePlayerPosition() {
+
+  const positions = [
+    33.5,
+    50,
+    66.5
+  ];
+
+  player.style.left =
+    positions[targetLane] + "%";
 
 }
 
 
-function moveRight(){
+/* =====================================================
+   LANE CHANGE
+===================================================== */
 
-  if(!running) return;
+function moveLeft() {
 
-  lane++;
+  if (!running) return;
 
-  if(lane > 1)
-    lane=1;
+  targetLane =
+    Math.max(
+      0,
+      targetLane - 1
+    );
 
-  targetX =
-    lane*laneWidth;
+  updatePlayerPosition();
+
+}
+
+function moveRight() {
+
+  if (!running) return;
+
+  targetLane =
+    Math.min(
+      2,
+      targetLane + 1
+    );
+
+  updatePlayerPosition();
 
 }
 
 
-function jump(){
+/* =====================================================
+   JUMP
+===================================================== */
 
-  if(
+function jump() {
+
+  if (
     !running ||
-    !grounded ||
+    jumping ||
     sliding
-  )
+  ) {
     return;
+  }
 
-  grounded=false;
+  jumping = true;
 
-  verticalVelocity=.27;
+  jumpTimer = 650;
 
-}
+  player.style.transition =
+    "transform .18s ease";
 
-
-function slide(){
-
-  if(
-    !running ||
-    !grounded
-  )
-    return;
-
-  sliding=true;
-
-  slideTimer=500;
+  player.style.transform =
+    "translateX(-50%) translateY(-110px)";
 
 }
 
 
 /* =====================================================
-   SWIPE CONTROLS
+   SLIDE
 ===================================================== */
 
-let startX=0;
-let startY=0;
+function slide() {
 
-renderer.domElement.addEventListener(
-  "touchstart",
-  e=>{
+  if (
+    !running ||
+    sliding ||
+    jumping
+  ) {
+    return;
+  }
 
-    const t=e.touches[0];
+  sliding = true;
 
-    startX=t.clientX;
-    startY=t.clientY;
+  slideTimer = 650;
 
-  },
-  {passive:true}
-);
+  player.style.transform =
+    "translateX(-50%) scaleY(.55) translateY(35px)";
+
+}
 
 
-renderer.domElement.addEventListener(
-  "touchend",
-  e=>{
+/* =====================================================
+   BUTTONS
+===================================================== */
 
-    if(!running)
-      return;
+document
+  .getElementById("leftButton")
+  .addEventListener(
+    "pointerdown",
+    moveLeft
+  );
 
-    const t=e.changedTouches[0];
+document
+  .getElementById("rightButton")
+  .addEventListener(
+    "pointerdown",
+    moveRight
+  );
 
-    const dx =
-      t.clientX-startX;
+document
+  .getElementById("jumpButton")
+  .addEventListener(
+    "pointerdown",
+    jump
+  );
 
-    const dy =
-      t.clientY-startY;
-
-    if(
-      Math.abs(dx) >
-      Math.abs(dy)
-    ){
-
-      if(
-        Math.abs(dx)>30
-      ){
-
-        if(dx>0)
-          moveRight();
-        else
-          moveLeft();
-
-      }
-
-    }else{
-
-      if(
-        Math.abs(dy)>30
-      ){
-
-        if(dy<0)
-          jump();
-        else
-          slide();
-
-      }
-
-    }
-
-  },
-  {passive:true}
-);
+document
+  .getElementById("slideButton")
+  .addEventListener(
+    "pointerdown",
+    slide
+  );
 
 
 /* =====================================================
@@ -962,348 +1028,472 @@ renderer.domElement.addEventListener(
 
 document.addEventListener(
   "keydown",
-  e=>{
+  event => {
 
-    if(e.key==="ArrowLeft")
+    if (event.key === "ArrowLeft") {
       moveLeft();
+    }
 
-    if(e.key==="ArrowRight")
+    if (event.key === "ArrowRight") {
       moveRight();
+    }
 
-    if(e.key==="ArrowUp")
+    if (
+      event.key === "ArrowUp" ||
+      event.key === " "
+    ) {
       jump();
+    }
 
-    if(e.key==="ArrowDown")
+    if (event.key === "ArrowDown") {
       slide();
+    }
 
   }
 );
 
 
 /* =====================================================
+   SWIPES
+===================================================== */
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.addEventListener(
+  "touchstart",
+  event => {
+
+    if (!running) return;
+
+    const touch =
+      event.changedTouches[0];
+
+    touchStartX =
+      touch.clientX;
+
+    touchStartY =
+      touch.clientY;
+
+  },
+  {passive:true}
+);
+
+document.addEventListener(
+  "touchend",
+  event => {
+
+    if (!running) return;
+
+    const touch =
+      event.changedTouches[0];
+
+    const dx =
+      touch.clientX -
+      touchStartX;
+
+    const dy =
+      touch.clientY -
+      touchStartY;
+
+    const absX =
+      Math.abs(dx);
+
+    const absY =
+      Math.abs(dy);
+
+    if (
+      Math.max(absX, absY) < 30
+    ) {
+      return;
+    }
+
+    if (absX > absY) {
+
+      if (dx > 0) {
+        moveRight();
+      } else {
+        moveLeft();
+      }
+
+    } else {
+
+      if (dy < 0) {
+        jump();
+      } else {
+        slide();
+      }
+
+    }
+
+  },
+  {passive:true}
+);
+
+
+/* =====================================================
+   SPAWN OBJECT
+===================================================== */
+
+function spawnObject(type, objectLane) {
+
+  const el =
+    document.createElement("div");
+
+  el.className =
+    "worldObject " + type;
+
+  world.appendChild(el);
+
+  const object = {
+
+    el: el,
+
+    type: type,
+
+    lane: objectLane,
+
+    y: -100,
+
+    size: 1
+
+  };
+
+  objects.push(object);
+
+  return object;
+
+}
+
+
+/* =====================================================
+   SPAWN COIN LINE
+===================================================== */
+
+function spawnCoins() {
+
+  const objectLane =
+    Math.floor(
+      Math.random() * 3
+    );
+
+  for (
+    let i = 0;
+    i < 5;
+    i++
+  ) {
+
+    const coin =
+      spawnObject(
+        "coin",
+        objectLane
+      );
+
+    coin.y =
+      -100 -
+      i * 75;
+
+  }
+
+}
+
+
+/* =====================================================
+   SPAWN OBSTACLE
+===================================================== */
+
+function spawnObstacle() {
+
+  const objectLane =
+    Math.floor(
+      Math.random() * 3
+    );
+
+  const types = [
+    "obstacle",
+    "barrier"
+  ];
+
+  const type =
+    types[
+      Math.floor(
+        Math.random() *
+        types.length
+      )
+    ];
+
+  spawnObject(
+    type,
+    objectLane
+  );
+
+}
+
+
+/* =====================================================
+   SPAWN POWERUP
+===================================================== */
+
+function spawnPowerup() {
+
+  const objectLane =
+    Math.floor(
+      Math.random() * 3
+    );
+
+  const powerTypes = [
+    "⚡",
+    "🛡️",
+    "🪙"
+  ];
+
+  const type =
+    powerTypes[
+      Math.floor(
+        Math.random() *
+        powerTypes.length
+      )
+    ];
+
+  const object =
+    spawnObject(
+      "powerup",
+      objectLane
+    );
+
+  object.powerType =
+    type;
+
+  object.el.textContent =
+    type;
+
+}
+
+
+/* =====================================================
+   OBJECT POSITION
+===================================================== */
+
+function updateObject(object) {
+
+  object.y +=
+    speed * 7;
+
+  const progress =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        (object.y + 100) /
+        (window.innerHeight + 150)
+      )
+    );
+
+  const scale =
+    .35 +
+    progress * 1.5;
+
+  const lanePositions = [
+    33.5,
+    50,
+    66.5
+  ];
+
+  object.el.style.left =
+    lanePositions[object.lane] + "%";
+
+  object.el.style.top =
+    object.y + "px";
+
+  object.el.style.transform =
+    "translateX(-50%) scale(" +
+    scale +
+    ")";
+
+}
+
+
+/* =====================================================
    COLLISION
 ===================================================== */
 
-function collision(a,b){
+function checkCollision(object) {
 
-  return (
-    Math.abs(
-      a.position.x -
-      b.position.x
-    ) < 1 &&
+  const playerLane =
+    targetLane;
 
-    Math.abs(
-      a.position.z -
-      b.position.z
-    ) < 1.2 &&
+  if (
+    object.lane !== playerLane
+  ) {
+    return false;
+  }
 
+  const objectBottom =
+    object.y +
+    60;
+
+  const playerY =
+    window.innerHeight *
+    .78;
+
+  const distance =
     Math.abs(
-      a.position.y -
-      b.position.y
-    ) < 1.5
-  );
+      objectBottom -
+      playerY
+    );
+
+  return distance < 85;
 
 }
 
 
 /* =====================================================
-   UPDATE
+   HANDLE OBJECT
 ===================================================== */
 
-function update(dt){
+function handleObject(object) {
 
-  /*
-    Smooth lane movement.
-  */
+  if (
+    object.type === "coin"
+  ) {
 
-  player.position.x +=
-    (
-      targetX -
-      player.position.x
-    ) * .18;
+    runCoins++;
 
+    score +=
+      25 * multiplier;
 
-  /*
-    Jump.
-  */
+    object.el.remove();
 
-  if(!grounded){
-
-    player.position.y +=
-      verticalVelocity *
-      dt;
-
-    verticalVelocity -=
-      .014 *
-      dt;
-
-    if(
-      player.position.y <=
-      1.1
-    ){
-
-      player.position.y=1.1;
-
-      verticalVelocity=0;
-
-      grounded=true;
-
-    }
+    return;
 
   }
 
 
-  /*
-    Slide.
-  */
+  if (
+    object.type === "powerup"
+  ) {
 
-  if(sliding){
+    activatePower(
+      object.powerType
+    );
 
-    slideTimer -= dt*16;
+    missionPowerCount++;
 
-    player.scale.y=.55;
+    object.el.remove();
 
-    if(slideTimer<=0){
-
-      sliding=false;
-
-      player.scale.y=1;
-
-    }
+    return;
 
   }
 
 
-  /*
-    Running animation.
-  */
+  if (
+    object.type === "obstacle"
+  ) {
 
-  const run =
-    performance.now()/100;
-
-  leftLeg.rotation.x =
-    Math.sin(run)*.6;
-
-  rightLeg.rotation.x =
-    -Math.sin(run)*.6;
-
-  leftArm.rotation.x =
-    -Math.sin(run)*.5;
-
-  rightArm.rotation.x =
-    Math.sin(run)*.5;
-
-
-  /*
-    Speed.
-  */
-
-  gameSpeed +=
-    .000025 *
-    dt;
-
-  if(gameSpeed>.9)
-    gameSpeed=.9;
-
-
-  /*
-    Objects move.
-  */
-
-  objects.forEach(
-    object=>{
-
-      object.position.z +=
-        gameSpeed*dt;
-
-    }
-  );
-
-
-  coinObjects.forEach(
-    coin=>{
-
-      coin.position.z +=
-        gameSpeed*dt;
-
-      coin.rotation.z +=
-        .08*dt;
-
-    }
-  );
-
-
-  /*
-    Spawn.
-  */
-
-  spawnTimer += dt;
-
-  coinTimer += dt;
-
-  if(
-    spawnTimer >
-    55
-  ){
-
-    createObstacle();
-
-    spawnTimer=0;
-
-  }
-
-  if(
-    coinTimer >
-    75
-  ){
-
-    createCoins();
-
-    coinTimer=0;
-
-  }
-
-
-  /*
-    Collision.
-  */
-
-  for(
-    const obstacle of objects
-  ){
-
-    if(
-      collision(
-        player,
-        obstacle
-      )
-    ){
-
-      endGame();
-
+    if (
+      jumping ||
+      sliding
+    ) {
       return;
-
     }
+
+    endGame();
+
+    return;
 
   }
 
 
-  /*
-    Coins.
-  */
+  if (
+    object.type === "barrier"
+  ) {
 
-  for(
-    const coin of coinObjects
-  ){
-
-    if(
-      !coin.userData.collected &&
-      Math.abs(
-        player.position.x -
-        coin.position.x
-      )<1 &&
-
-      Math.abs(
-        player.position.z -
-        coin.position.z
-      )<1.4 &&
-
-      Math.abs(
-        player.position.y -
-        coin.position.y
-      )<1.5
-    ){
-
-      coin.userData.collected=true;
-
-      coin.visible=false;
-
-      runCoins++;
-
-      save.coins++;
-
-      saveGame();
-
+    if (jumping) {
+      return;
     }
 
+    endGame();
+
   }
-
-
-  /*
-    Cleanup.
-  */
-
-  objects =
-    objects.filter(
-      object=>{
-
-        if(
-          object.position.z>15
-        ){
-
-          scene.remove(object);
-
-          return false;
-
-        }
-
-        return true;
-
-      }
-    );
-
-
-  coinObjects =
-    coinObjects.filter(
-      coin=>{
-
-        if(
-          coin.position.z>15
-        ){
-
-          scene.remove(coin);
-
-          return false;
-
-        }
-
-        return true;
-
-      }
-    );
-
-
-  score +=
-    gameSpeed*dt*.8;
-
-
-  updateHUD();
 
 }
 
 
 /* =====================================================
-   HUD
+   POWERUPS
 ===================================================== */
 
-function updateHUD(){
+function activatePower(type) {
 
-  document.getElementById(
-    "coins"
-  ).textContent =
-    runCoins;
+  if (
+    type === "⚡"
+  ) {
 
-  document.getElementById(
-    "score"
-  ).textContent =
-    Math.floor(score);
+    powerMode =
+      "speed";
 
-  document.getElementById(
-    "speed"
-  ).textContent =
-    (
-      gameSpeed/.42
-    ).toFixed(1);
+    powerTime =
+      5000;
+
+    showPowerMessage(
+      "⚡ SHADOW SPEED!"
+    );
+
+  }
+
+  if (
+    type === "🛡️"
+  ) {
+
+    powerMode =
+      "shield";
+
+    powerTime =
+      6000;
+
+    showPowerMessage(
+      "🛡️ SHADOW SHIELD!"
+    );
+
+  }
+
+  if (
+    type === "🪙"
+  ) {
+
+    powerMode =
+      "coins";
+
+    powerTime =
+      6000;
+
+    showPowerMessage(
+      "🪙 COIN BOOST!"
+    );
+
+  }
+
+}
+
+function showPowerMessage(text) {
+
+  const message =
+    document.getElementById(
+      "powerMessage"
+    );
+
+  message.textContent =
+    text;
+
+  message.style.opacity =
+    "1";
+
+  setTimeout(() => {
+
+    message.style.opacity =
+      "0";
+
+  }, 1200);
 
 }
 
@@ -1312,35 +1502,290 @@ function updateHUD(){
    GAME LOOP
 ===================================================== */
 
-function loop(time){
+function gameLoop(time) {
 
-  if(!running)
+  if (!running) {
     return;
+  }
 
-  const dt =
+  const delta =
+    time -
+    lastTime;
+
+  lastTime =
+    time;
+
+  /* SPEED */
+
+  speed +=
+    delta * 0.000004;
+
+  if (
+    powerMode === "speed"
+  ) {
+    speed *= 1.003;
+  }
+
+  /* SCORE */
+
+  score +=
+    delta *
+    0.025 *
+    multiplier;
+
+  /* MULTIPLIER */
+
+  multiplier =
     Math.min(
-      time-lastTime,
-      40
+      10,
+      1 +
+      Math.floor(
+        score / 1000
+      )
     );
 
-  lastTime=time;
+  /* JUMP */
 
-  update(dt);
+  if (jumping) {
 
-  camera.lookAt(
-    player.position.x*.35,
-    1.5,
-    -12
-  );
+    jumpTimer -=
+      delta;
 
-  renderer.render(
-    scene,
-    camera
-  );
+    if (
+      jumpTimer <= 0
+    ) {
+
+      jumping = false;
+
+      player.style.transform =
+        "translateX(-50%)";
+
+    }
+
+  }
+
+  /* SLIDE */
+
+  if (sliding) {
+
+    slideTimer -=
+      delta;
+
+    if (
+      slideTimer <= 0
+    ) {
+
+      sliding = false;
+
+      player.style.transform =
+        "translateX(-50%)";
+
+    }
+
+  }
+
+  /* POWER TIMER */
+
+  if (
+    powerMode
+  ) {
+
+    powerTime -=
+      delta;
+
+    if (
+      powerTime <= 0
+    ) {
+
+      powerMode =
+        "";
+
+    }
+
+  }
+
+  /* SPAWNING */
+
+  spawnTimer -=
+    delta;
+
+  if (
+    spawnTimer <= 0
+  ) {
+
+    const roll =
+      Math.random();
+
+    if (
+      roll < .45
+    ) {
+
+      spawnCoins();
+
+    }
+
+    else {
+
+      spawnObstacle();
+
+    }
+
+    spawnTimer =
+      Math.max(
+        400,
+        850 -
+        speed * 100
+      );
+
+  }
+
+  /* POWERUPS */
+
+  powerTimer -=
+    delta;
+
+  if (
+    powerTimer <= 0
+  ) {
+
+    if (
+      Math.random() < .55
+    ) {
+
+      spawnPowerup();
+
+    }
+
+    powerTimer =
+      5000 +
+      Math.random() * 4000;
+
+  }
+
+  /* OBJECTS */
+
+  for (
+    let i = objects.length - 1;
+    i >= 0;
+    i--
+  ) {
+
+    const object =
+      objects[i];
+
+    updateObject(
+      object
+    );
+
+    if (
+      checkCollision(
+        object
+      )
+    ) {
+
+      if (
+        powerMode ===
+        "shield" &&
+        (
+          object.type ===
+          "obstacle" ||
+          object.type ===
+          "barrier"
+        )
+      ) {
+
+        showPowerMessage(
+          "🛡️ SHIELD BLOCKED!"
+        );
+
+        object.el.remove();
+
+        objects.splice(
+          i,
+          1
+        );
+
+        continue;
+
+      }
+
+      handleObject(
+        object
+      );
+
+      if (
+        !running
+      ) {
+        return;
+      }
+
+      if (
+        !object.el.parentNode
+      ) {
+
+        objects.splice(
+          i,
+          1
+        );
+
+        continue;
+
+      }
+
+    }
+
+    if (
+      object.y >
+      window.innerHeight +
+      150
+    ) {
+
+      object.el.remove();
+
+      objects.splice(
+        i,
+        1
+      );
+
+    }
+
+  }
+
+  updateUI();
 
   requestAnimationFrame(
-    loop
+    gameLoop
   );
+
+}
+
+
+/* =====================================================
+   UI
+===================================================== */
+
+function updateUI() {
+
+  document.getElementById(
+    "score"
+  ).textContent =
+    Math.floor(
+      score
+    ).toLocaleString();
+
+  document.getElementById(
+    "multiplier"
+  ).textContent =
+    "x" +
+    multiplier;
+
+  document.getElementById(
+    "coins"
+  ).textContent =
+    (
+      save.coins +
+      runCoins
+    ).toLocaleString();
 
 }
 
@@ -1349,20 +1794,29 @@ function loop(time){
    GAME OVER
 ===================================================== */
 
-function endGame(){
+function endGame() {
 
-  running=false;
+  if (!running) {
+    return;
+  }
 
-  const finalScore =
-    Math.floor(score);
+  running = false;
 
-  if(
-    finalScore >
-    save.best
-  ){
+  const final =
+    Math.floor(
+      score
+    );
 
-    save.best =
-      finalScore;
+  save.coins +=
+    runCoins;
+
+  if (
+    final >
+    save.bestScore
+  ) {
+
+    save.bestScore =
+      final;
 
   }
 
@@ -1371,90 +1825,167 @@ function endGame(){
   document.getElementById(
     "finalScore"
   ).textContent =
-    finalScore;
+    "SCORE: " +
+    final.toLocaleString();
 
   document.getElementById(
     "finalCoins"
   ).textContent =
-    runCoins;
+    runCoins.toLocaleString();
 
   document.getElementById(
     "finalBest"
   ).textContent =
-    save.best;
+    save.bestScore.toLocaleString();
 
-  document
-    .getElementById("gameOver")
-    .classList.remove("hidden");
+  updateMissionUI();
 
-}
-
-
-/* =====================================================
-   MENU
-===================================================== */
-
-function showMenu(){
-
-  running=false;
-
-  document
-    .getElementById("gameOver")
-    .classList.add("hidden");
-
-  document
-    .getElementById("menu")
-    .classList.remove("hidden");
-
-  document.getElementById(
-    "menuCoins"
-  ).textContent =
-    save.coins;
-
-  document.getElementById(
-    "best"
-  ).textContent =
-    save.best;
+  showScreen(
+    "gameOverScreen"
+  );
 
 }
 
 
 /* =====================================================
-   RESIZE
+   MISSIONS
 ===================================================== */
 
-window.addEventListener(
-  "resize",
-  ()=>{
+function updateMissionUI() {
 
-    camera.aspect =
-      window.innerWidth /
-      window.innerHeight;
+  document.getElementById(
+    "missionCoins"
+  ).textContent =
+    Math.min(
+      runCoins,
+      25
+    ) +
+    " / 25";
 
-    camera.updateProjectionMatrix();
+  document.getElementById(
+    "missionScore"
+  ).textContent =
+    Math.min(
+      Math.floor(score),
+      2000
+    ) +
+    " / 2000";
 
-    renderer.setSize(
-      window.innerWidth,
-      window.innerHeight
+  document.getElementById(
+    "missionPower"
+  ).textContent =
+    Math.min(
+      missionPowerCount,
+      3
+    ) +
+    " / 3";
+
+}
+
+
+/* =====================================================
+   MENU BUTTONS
+===================================================== */
+
+document
+  .getElementById("startButton")
+  .onclick = () => {
+
+    startGame();
+
+  };
+
+
+document
+  .getElementById("retryButton")
+  .onclick = () => {
+
+    startGame();
+
+  };
+
+
+document
+  .getElementById("homeButton")
+  .onclick = () => {
+
+    updateMenu();
+
+    showScreen(
+      "menuScreen"
     );
 
-  }
-);
+  };
 
 
-/* Initial menu */
+document
+  .getElementById("missionButton")
+  .onclick = () => {
 
-document.getElementById(
-  "menuCoins"
-).textContent =
-  save.coins;
+    updateMissionUI();
 
-document.getElementById(
-  "best"
-).textContent =
-  save.best;
+    showScreen(
+      "missionScreen"
+    );
+
+  };
+
+
+document
+  .getElementById("missionBack")
+  .onclick = () => {
+
+    updateMenu();
+
+    showScreen(
+      "menuScreen"
+    );
+
+  };
+
+
+/* =====================================================
+   RESET SAVE
+===================================================== */
+
+document
+  .getElementById("resetButton")
+  .onclick = () => {
+
+    const confirmReset =
+      confirm(
+        "Reset all Shadow Rush coins and high score?"
+      );
+
+    if (
+      !confirmReset
+    ) {
+      return;
+    }
+
+    localStorage.removeItem(
+      SAVE_KEY
+    );
+
+    save = {
+      coins: 0,
+      bestScore: 0
+    };
+
+    updateMenu();
+
+  };
+
+
+/* =====================================================
+   INITIAL MENU
+===================================================== */
+
+loadSave();
+
+updateMenu();
 
 </script>
 
 </body>
-        </html>
+      </html>
