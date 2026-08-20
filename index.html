@@ -3190,16 +3190,16 @@ function animatePlayer(){
 
 }
 
-
-/* =========================================================
-   UPDATE PLAYER
-========================================================= */
+ */
 
 function updatePlayer(dt){
 
+  /* ================================
+     LANE MOVEMENT
+  ================================= */
+
   const targetX =
     laneX(targetLane);
-
 
   player.position.x +=
     (
@@ -3208,19 +3208,21 @@ function updatePlayer(dt){
     ) *
     Math.min(
       1,
-      dt*13
+      dt * 13
     );
 
 
-  /* JUMP */
+  /* ================================
+     JUMP
+  ================================= */
 
   if(isJumping){
 
     player.position.y +=
-      jumpVelocity*dt;
+      jumpVelocity * dt;
 
     jumpVelocity -=
-      28*dt;
+      28 * dt;
 
 
     if(
@@ -3241,12 +3243,20 @@ function updatePlayer(dt){
   }
 
 
-  /* SLIDE */
+  /* ================================
+     SLIDE
+  ================================= */
 
   if(isSliding){
 
     slideTimer -=
       dt;
+
+    player.scale.y =
+      .58;
+
+    player.position.y =
+      .03;
 
 
     if(
@@ -3267,27 +3277,36 @@ function updatePlayer(dt){
   }
 
 
-  playerShadow.position.x =
-    player.position.x;
+  /* ================================
+     NORMAL GROUND POSITION
+  ================================= */
 
-  playerShadow.position.z =
-    player.position.z;
+  if(
+    !isJumping &&
+    !isSliding
+  ){
+
+    /*
+      Keep the character standing
+      on the road instead of floating.
+    */
+
+    player.position.y =
+      Math.max(
+        0,
+        player.position.y
+      );
+
+  }
 
 
-  const shadowScale =
-    isJumping
-    ? .6
-    : 1;
+  /* ================================
+     PLAYER SHADOW
+  ================================= */
 
-
-  playerShadow.scale.set(
-    shadowScale,
-    shadowScale,
-    1
-  );
+  updatePlayerShadow();
 
 }
-
 
 /* =========================================================
    UPDATE OBJECTS
