@@ -1210,65 +1210,422 @@ function makeArm(side){
 }
 
 
-/* LEGS */
+/* =========================================================
+   PLAYER
+   Human-shaped Shadow Runner
+========================================================= */
 
-function makeLeg(side){
+const player =
+  new THREE.Group();
+
+scene.add(player);
+
+player.position.set(
+  0,
+  0,
+  6
+);
+
+
+/* =========================================================
+   PLAYER MATERIALS
+========================================================= */
+
+const skinMat =
+  new THREE.MeshStandardMaterial({
+    color:0xb9785b,
+    roughness:.7
+  });
+
+const hairMat =
+  new THREE.MeshStandardMaterial({
+    color:0x030308,
+    roughness:.45
+  });
+
+const jacketMat =
+  new THREE.MeshStandardMaterial({
+    color:0x21103f,
+    emissive:0x100020,
+    emissiveIntensity:.7,
+    roughness:.65
+  });
+
+const jacketEdgeMat =
+  new THREE.MeshStandardMaterial({
+    color:0x7c35e8,
+    emissive:0x351080,
+    emissiveIntensity:1,
+    roughness:.4
+  });
+
+const pantsMat =
+  new THREE.MeshStandardMaterial({
+    color:0x090912,
+    roughness:.8
+  });
+
+const shoeMat =
+  new THREE.MeshStandardMaterial({
+    color:0x030306,
+    metalness:.25,
+    roughness:.5
+  });
+
+const eyeMat =
+  new THREE.MeshBasicMaterial({
+    color:0x00eaff
+  });
+
+const auraMat =
+  new THREE.MeshBasicMaterial({
+    color:0x792cff,
+    transparent:true,
+    opacity:.22,
+    side:THREE.DoubleSide
+  });
+
+
+/* =========================================================
+   HELPER
+========================================================= */
+
+function roundedPart(
+  radius,
+  width,
+  height,
+  depth,
+  material
+){
+
+  const mesh =
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        radius,
+        height,
+        6,
+        12
+      ),
+      material
+    );
+
+  mesh.scale.x =
+    width / (radius*2);
+
+  mesh.scale.z =
+    depth / (radius*2);
+
+  return mesh;
+
+}
+
+
+/* =========================================================
+   PARTS
+========================================================= */
+
+const parts = {};
+
+
+/* =========================================================
+   TORSO
+========================================================= */
+
+const torso =
+  new THREE.Mesh(
+    new THREE.CapsuleGeometry(
+      .55,
+      1.05,
+      6,
+      14
+    ),
+    jacketMat
+  );
+
+torso.scale.set(
+  1.05,
+  1,
+  .62
+);
+
+torso.position.y =
+  2.25;
+
+player.add(torso);
+
+parts.torso =
+  torso;
+
+
+/* =========================================================
+   JACKET FRONT
+========================================================= */
+
+const jacketFront =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .42,
+      .95,
+      .055
+    ),
+    jacketEdgeMat
+  );
+
+jacketFront.position.set(
+  0,
+  2.27,
+  -.35
+);
+
+player.add(jacketFront);
+
+parts.jacketFront =
+  jacketFront;
+
+
+/* =========================================================
+   BELT
+========================================================= */
+
+const belt =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .95,
+      .12,
+      .58
+    ),
+    jacketEdgeMat
+  );
+
+belt.position.y =
+  1.72;
+
+player.add(belt);
+
+parts.belt =
+  belt;
+
+
+/* =========================================================
+   NECK
+========================================================= */
+
+const neck =
+  new THREE.Mesh(
+    new THREE.CylinderGeometry(
+      .16,
+      .18,
+      .25,
+      12
+    ),
+    skinMat
+  );
+
+neck.position.y =
+  3.15;
+
+player.add(neck);
+
+
+/* =========================================================
+   HEAD
+========================================================= */
+
+const head =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      .47,
+      20,
+      16
+    ),
+    skinMat
+  );
+
+head.scale.set(
+  .92,
+  1.08,
+  .9
+);
+
+head.position.y =
+  3.65;
+
+player.add(head);
+
+parts.head =
+  head;
+
+
+/* =========================================================
+   HAIR
+========================================================= */
+
+const hair =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      .51,
+      18,
+      14
+    ),
+    hairMat
+  );
+
+hair.scale.set(
+  1,
+  .72,
+  1
+);
+
+hair.position.y =
+  3.93;
+
+player.add(hair);
+
+parts.hair =
+  hair;
+
+
+/* =========================================================
+   HAIR SPIKES
+========================================================= */
+
+for(
+  let i=0;
+  i<9;
+  i++
+){
+
+  const spike =
+    new THREE.Mesh(
+      new THREE.ConeGeometry(
+        .12,
+        .38,
+        8
+      ),
+      hairMat
+    );
+
+  const angle =
+    -Math.PI/2 +
+    (i/8)*Math.PI;
+
+  spike.position.set(
+    Math.cos(angle)*.36,
+    4.08 +
+    Math.sin(angle)*.12,
+    0
+  );
+
+  spike.rotation.z =
+    (i-4)*.16;
+
+  player.add(spike);
+
+}
+
+
+/* =========================================================
+   EYES
+========================================================= */
+
+for(
+  const x of [-.16,.16]
+){
+
+  const eye =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        .12,
+        .045,
+        .035
+      ),
+      eyeMat
+    );
+
+  eye.position.set(
+    x,
+    3.68,
+    -.43
+  );
+
+  player.add(eye);
+
+}
+
+
+/* =========================================================
+   ARMS
+========================================================= */
+
+function makeArm(side){
+
+  const group =
+    new THREE.Group();
+
+  group.position.set(
+    side*.66,
+    2.72,
+    0
+  );
+
+  player.add(group);
+
 
   const upper =
-    box(
-      .34,
-      .85,
-      .34,
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        .16,
+        .55,
+        5,
+        10
+      ),
       jacketMat
     );
 
-  upper.position.set(
-    side*.3,
-    1.25,
-    0
-  );
+  upper.position.y =
+    -.28;
 
-  player.add(upper);
+  group.add(upper);
 
 
   const lower =
-    box(
-      .3,
-      .85,
-      .3,
-      shoeMat
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        .14,
+        .48,
+        5,
+        10
+      ),
+      jacketMat
     );
 
-  lower.position.set(
-    side*.3,
-    .43,
-    0
-  );
+  lower.position.y =
+    -.86;
 
-  player.add(lower);
+  group.add(lower);
 
 
-  const shoe =
-    box(
-      .4,
-      .18,
-      .7,
-      shoeMat
+  const hand =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .15,
+        12,
+        10
+      ),
+      skinMat
     );
 
-  shoe.position.set(
-    side*.3,
-    .02,
-    -.13
-  );
+  hand.position.y =
+    -1.2;
 
-  player.add(shoe);
+  group.add(hand);
 
 
   return {
+    group,
     upper,
     lower,
-    shoe
+    hand
   };
 
 }
@@ -1280,6 +1637,88 @@ parts.leftArm =
 parts.rightArm =
   makeArm(1);
 
+
+/* =========================================================
+   LEGS
+========================================================= */
+
+function makeLeg(side){
+
+  const group =
+    new THREE.Group();
+
+  group.position.set(
+    side*.28,
+    1.55,
+    0
+  );
+
+  player.add(group);
+
+
+  const upper =
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        .19,
+        .58,
+        5,
+        10
+      ),
+      pantsMat
+    );
+
+  upper.position.y =
+    -.38;
+
+  group.add(upper);
+
+
+  const lower =
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        .16,
+        .58,
+        5,
+        10
+      ),
+      pantsMat
+    );
+
+  lower.position.y =
+    -1.02;
+
+  group.add(lower);
+
+
+  const shoe =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        .4,
+        .2,
+        .68
+      ),
+      shoeMat
+    );
+
+  shoe.position.set(
+    0,
+    -1.38,
+    -.13
+  );
+
+  group.add(shoe);
+
+
+  return {
+    group,
+    upper,
+    lower,
+    shoe
+  };
+
+}
+
+
 parts.leftLeg =
   makeLeg(-1);
 
@@ -1287,29 +1726,217 @@ parts.rightLeg =
   makeLeg(1);
 
 
-/* PLAYER SHADOW */
+/* =========================================================
+   SHADOW AURA
+========================================================= */
+
+const aura =
+  new THREE.Mesh(
+    new THREE.CylinderGeometry(
+      .7,
+      1.05,
+      3.8,
+      16,
+      1,
+      true
+    ),
+    auraMat
+  );
+
+aura.position.y =
+  2.05;
+
+player.add(aura);
+
+parts.aura =
+  aura;
+
+
+/* =========================================================
+   PLAYER SHADOW ON ROAD
+========================================================= */
 
 const playerShadow =
   new THREE.Mesh(
     new THREE.CircleGeometry(
-      1.2,
+      1.15,
       24
     ),
     new THREE.MeshBasicMaterial({
       color:0x000000,
       transparent:true,
-      opacity:.55
+      opacity:.58
     })
   );
 
 playerShadow.rotation.x =
   -Math.PI/2;
 
-playerShadow.position.y =
-  .025;
+playerShadow.position.set(
+  0,
+  .025,
+  6
+);
 
 scene.add(playerShadow);
 
+
+/* =========================================================
+   PLAYER ANIMATION
+========================================================= */
+
+function animatePlayer(){
+
+  if(!running)
+    return;
+
+
+  const swing =
+    Math.sin(
+      runTime * 13
+    );
+
+  const opposite =
+    Math.sin(
+      runTime * 13 +
+      Math.PI
+    );
+
+
+  /* =====================================================
+     SLIDE
+  ===================================================== */
+
+  if(isSliding){
+
+    player.scale.y =
+      .58;
+
+    player.position.y =
+      .03;
+
+
+    parts.leftArm.group.rotation.x =
+      1.05;
+
+    parts.rightArm.group.rotation.x =
+      1.05;
+
+
+    parts.leftLeg.group.rotation.x =
+      .25;
+
+    parts.rightLeg.group.rotation.x =
+      -.25;
+
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     NORMAL HEIGHT
+  ===================================================== */
+
+  player.scale.y =
+    1;
+
+
+  /* =====================================================
+     LEGS
+  ===================================================== */
+
+  parts.leftLeg.group.rotation.x =
+    swing * .72;
+
+  parts.rightLeg.group.rotation.x =
+    opposite * .72;
+
+
+  parts.leftLeg.lower.rotation.x =
+    -Math.max(
+      0,
+      swing
+    ) * .35;
+
+  parts.rightLeg.lower.rotation.x =
+    -Math.max(
+      0,
+      opposite
+    ) * .35;
+
+
+  /* =====================================================
+     ARMS
+  ===================================================== */
+
+  parts.leftArm.group.rotation.x =
+    opposite * .62;
+
+  parts.rightArm.group.rotation.x =
+    swing * .62;
+
+
+  parts.leftArm.lower.rotation.x =
+    opposite * .25;
+
+  parts.rightArm.lower.rotation.x =
+    swing * .25;
+
+
+  /* =====================================================
+     BODY BOB
+  ===================================================== */
+
+  if(!isJumping){
+
+    player.position.y =
+      Math.abs(
+        Math.sin(
+          runTime * 13
+        )
+      ) * .035;
+
+  }
+
+
+  /* =====================================================
+     AURA
+  ===================================================== */
+
+  parts.aura.rotation.y +=
+    .025;
+
+}
+
+
+/* =========================================================
+   PLAYER SHADOW UPDATE
+========================================================= */
+
+function updatePlayerShadow(){
+
+  playerShadow.position.x =
+    player.position.x;
+
+  playerShadow.position.z =
+    player.position.z;
+
+
+  const scale =
+    isJumping
+    ? .62
+    : 1;
+
+
+  playerShadow.scale.set(
+    scale,
+    scale,
+    1
+  );
+
+      }
 
 /* =========================================================
    GAME STATE
