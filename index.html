@@ -3,431 +3,606 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0, user-scalable=no">
 
 <title>SHADOW RUSH 3D</title>
 
 <style>
 *{
     box-sizing:border-box;
-    margin:0;
-    padding:0;
     -webkit-tap-highlight-color:transparent;
-    user-select:none;
 }
 
 html,body{
+    margin:0;
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#02050a;
+    background:#02030a;
     font-family:Arial,Helvetica,sans-serif;
     touch-action:none;
 }
 
-#game{
-    position:fixed;
-    inset:0;
-    overflow:hidden;
-    background:#02050a;
+body{
+    color:white;
 }
 
-/* =====================================================
+button{
+    font-family:inherit;
+    border:0;
+    outline:0;
+    cursor:pointer;
+    touch-action:manipulation;
+}
+
+/* =========================
    LOADING SCREEN
-===================================================== */
+========================= */
 
 #loadingScreen{
     position:fixed;
     inset:0;
-    z-index:9999;
+    z-index:1000;
     display:flex;
     align-items:center;
     justify-content:center;
-    overflow:hidden;
     background:
-        radial-gradient(circle at 50% 35%,rgba(40,100,255,.30),transparent 25%),
-        linear-gradient(180deg,#02050e 0%,#07142b 48%,#02050b 100%);
-    transition:opacity .8s ease, visibility .8s ease;
+        radial-gradient(circle at 50% 35%,rgba(0,140,255,.22),transparent 30%),
+        linear-gradient(180deg,#020611 0%,#03030a 100%);
 }
 
-#loadingScreen.hide{
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
+.loadingBox{
+    width:min(90%,430px);
+    text-align:center;
 }
 
-/* Cinematic background picture */
 .loadingScene{
-    position:absolute;
-    inset:0;
+    position:relative;
+    height:300px;
+    margin-bottom:15px;
     overflow:hidden;
+    border:1px solid rgba(0,180,255,.3);
+    border-radius:20px;
+    background:
+        linear-gradient(180deg,rgba(0,70,130,.18),transparent),
+        radial-gradient(circle at 50% 80%,rgba(0,180,255,.2),transparent 30%),
+        #02040b;
 }
 
-.cityGlow{
+.loadingMoon{
     position:absolute;
-    width:180%;
-    height:60%;
-    left:-40%;
-    bottom:0;
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    right:25px;
+    top:25px;
+    background:#dff6ff;
+    box-shadow:0 0 40px #49cfff;
+    opacity:.85;
+}
+
+.loadingRoad{
+    position:absolute;
+    bottom:-50px;
+    left:50%;
+    width:330px;
+    height:250px;
+    transform:translateX(-50%);
     background:
         linear-gradient(90deg,
-        transparent 0 7%,
-        rgba(40,120,255,.15) 8% 10%,
-        transparent 11% 18%,
-        rgba(130,40,255,.18) 19% 21%,
-        transparent 22% 29%,
-        rgba(30,150,255,.15) 30% 33%,
-        transparent 34% 45%,
-        rgba(80,50,255,.18) 46% 49%,
-        transparent 50% 100%);
-    filter:blur(10px);
-}
-
-.roadPicture{
-    position:absolute;
-    width:150%;
-    height:70%;
-    left:-25%;
-    bottom:-18%;
-    background:
-        linear-gradient(75deg,transparent 48%,rgba(80,150,255,.28) 49%,transparent 50%),
-        linear-gradient(105deg,transparent 48%,rgba(80,150,255,.28) 49%,transparent 50%),
-        linear-gradient(180deg,#07152a,#010307);
-    clip-path:polygon(28% 0,72% 0,100% 100%,0 100%);
-}
-
-.roadLine{
-    position:absolute;
-    bottom:-10%;
-    left:50%;
-    width:5px;
-    height:80%;
-    background:linear-gradient(transparent,rgba(80,180,255,.85));
-    box-shadow:0 0 18px #178cff;
-    transform:translateX(-50%);
-    opacity:.65;
+        transparent 48%,
+        rgba(0,180,255,.5) 49%,
+        rgba(0,180,255,.5) 51%,
+        transparent 52%);
+    transform-origin:bottom;
+    perspective:500px;
 }
 
 .runnerSilhouette{
     position:absolute;
     left:50%;
-    bottom:19%;
-    width:72px;
-    height:190px;
+    bottom:40px;
+    width:45px;
+    height:125px;
     transform:translateX(-50%);
-    filter:
-        drop-shadow(0 0 12px #148cff)
-        drop-shadow(0 0 35px rgba(30,100,255,.65));
 }
 
-/* head */
-.runnerSilhouette .head{
-    position:absolute;
-    width:39px;
-    height:45px;
+.runnerHead{
+    width:34px;
+    height:34px;
+    margin:auto;
     border-radius:50%;
-    left:17px;
-    top:0;
-    background:linear-gradient(135deg,#dcecff,#31598a 55%,#07101f);
+    background:#111;
+    box-shadow:0 0 18px #00aaff;
 }
 
-/* body */
-.runnerSilhouette .body{
+.runnerBody{
+    width:38px;
+    height:60px;
+    margin:4px auto;
+    border-radius:18px 18px 8px 8px;
+    background:#080b13;
+    box-shadow:0 0 20px rgba(0,160,255,.6);
+}
+
+.runnerLeg{
     position:absolute;
-    width:48px;
-    height:72px;
-    left:12px;
-    top:38px;
-    border-radius:22px 22px 13px 13px;
-    background:linear-gradient(90deg,#07101e,#238dff,#08101d);
+    width:10px;
+    height:55px;
+    bottom:-28px;
+    background:#090b11;
+    box-shadow:0 0 12px #008cff;
+    border-radius:10px;
 }
 
-/* arms */
-.runnerSilhouette .arm1,
-.runnerSilhouette .arm2{
-    position:absolute;
-    width:15px;
-    height:70px;
-    top:47px;
-    border-radius:12px;
-    background:linear-gradient(#1b83e8,#07101c);
+.runnerLeg.left{
+    left:8px;
+    transform:rotate(15deg);
 }
 
-.runnerSilhouette .arm1{
-    left:2px;
-    transform:rotate(25deg);
-}
-
-.runnerSilhouette .arm2{
-    right:1px;
-    transform:rotate(-35deg);
-}
-
-/* legs */
-.runnerSilhouette .leg1,
-.runnerSilhouette .leg2{
-    position:absolute;
-    width:18px;
-    height:86px;
-    top:101px;
-    border-radius:12px;
-    background:linear-gradient(#1678d5,#040a12);
-}
-
-.runnerSilhouette .leg1{
-    left:14px;
-    transform:rotate(20deg);
-}
-
-.runnerSilhouette .leg2{
-    right:14px;
-    transform:rotate(-25deg);
-}
-
-.loadingContent{
-    position:absolute;
-    z-index:5;
-    width:100%;
-    text-align:center;
-    top:9%;
+.runnerLeg.right{
+    right:8px;
+    transform:rotate(-15deg);
 }
 
 .loadingTitle{
     font-size:42px;
     font-weight:900;
-    letter-spacing:7px;
-    color:white;
+    letter-spacing:5px;
     text-shadow:
-        0 0 8px #168dff,
-        0 0 25px #168dff,
-        0 0 55px rgba(70,80,255,.7);
-}
-
-.loadingSub{
-    margin-top:8px;
-    color:#82bfff;
-    font-size:11px;
-    letter-spacing:6px;
-}
-
-.loadingBottom{
-    position:absolute;
-    z-index:5;
-    bottom:9%;
-    width:100%;
-    text-align:center;
+        0 0 10px #00aaff,
+        0 0 25px #0066ff;
 }
 
 .loadingText{
-    color:white;
-    font-size:15px;
-    letter-spacing:5px;
-    margin-bottom:14px;
-    animation:loadingPulse 1.2s infinite;
+    margin-top:10px;
+    color:#91dfff;
+    letter-spacing:3px;
+    font-size:13px;
 }
 
-.loadingBar{
-    width:220px;
-    max-width:70%;
-    height:4px;
-    margin:auto;
+.progress{
+    width:100%;
+    height:7px;
+    margin-top:18px;
+    background:#101722;
     border-radius:10px;
     overflow:hidden;
-    background:rgba(255,255,255,.15);
 }
 
-.loadingProgress{
-    height:100%;
+.progressBar{
     width:0%;
-    background:#1998ff;
-    box-shadow:0 0 15px #1998ff;
-    transition:width .3s ease;
+    height:100%;
+    background:linear-gradient(90deg,#008cff,#00eaff);
+    box-shadow:0 0 15px #00aaff;
+    transition:width .2s;
 }
 
-@keyframes loadingPulse{
-    0%,100%{opacity:.45}
-    50%{opacity:1}
+/* =========================
+   MENU
+========================= */
+
+#menu{
+    position:fixed;
+    inset:0;
+    z-index:900;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:
+        radial-gradient(circle at 50% 40%,rgba(0,100,255,.12),transparent 40%),
+        #02030a;
 }
 
-/* =====================================================
-   HUD
-===================================================== */
+.menuBox{
+    width:min(90%,420px);
+    padding:35px 25px;
+    text-align:center;
+    border:1px solid rgba(0,180,255,.35);
+    border-radius:25px;
+    background:rgba(3,8,20,.9);
+    box-shadow:
+        0 0 40px rgba(0,100,255,.15),
+        inset 0 0 30px rgba(0,100,255,.05);
+}
+
+.logo{
+    font-size:43px;
+    font-weight:900;
+    letter-spacing:4px;
+    color:white;
+    text-shadow:
+        0 0 8px #00aaff,
+        0 0 25px #0066ff;
+}
+
+.subtitle{
+    color:#73cfff;
+    margin-top:8px;
+    letter-spacing:3px;
+    font-size:12px;
+}
+
+.startButton{
+    width:100%;
+    margin-top:35px;
+    padding:19px;
+    border-radius:14px;
+    color:white;
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:3px;
+    background:linear-gradient(90deg,#006cff,#00baff);
+    box-shadow:
+        0 0 20px rgba(0,150,255,.45),
+        inset 0 0 10px rgba(255,255,255,.15);
+}
+
+.startButton:active{
+    transform:scale(.97);
+}
+
+.smallInfo{
+    margin-top:20px;
+    color:#60748b;
+    font-size:11px;
+}
+
+/* =========================
+   GAME
+========================= */
+
+#game{
+    position:fixed;
+    inset:0;
+    display:none;
+}
+
+#gameCanvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+}
 
 #hud{
     position:absolute;
-    z-index:20;
     top:12px;
     left:12px;
     right:12px;
     display:flex;
     justify-content:space-between;
     pointer-events:none;
+    z-index:20;
 }
 
 .hudBox{
-    padding:8px 12px;
-    border:1px solid rgba(60,150,255,.45);
+    min-width:80px;
+    padding:8px 10px;
     border-radius:10px;
-    background:rgba(0,10,25,.72);
-    color:white;
-    font-size:12px;
-    min-width:75px;
-    text-align:center;
-    box-shadow:0 0 12px rgba(0,110,255,.18);
+    background:rgba(0,0,0,.45);
+    border:1px solid rgba(0,180,255,.25);
+    backdrop-filter:blur(5px);
+}
+
+.hudLabel{
+    color:#65cfff;
+    font-size:9px;
+    letter-spacing:1px;
 }
 
 .hudValue{
-    color:#4db4ff;
+    margin-top:3px;
     font-size:17px;
-    font-weight:bold;
+    font-weight:900;
 }
 
-/* =====================================================
-   MENU
-===================================================== */
-
-#menu{
+#loadingGame{
     position:absolute;
+    inset:0;
     z-index:30;
-    inset:0;
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-    text-align:center;
-    background:
-        radial-gradient(circle,rgba(10,70,160,.18),transparent 40%),
-        linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.7));
+    background:#02030a;
 }
 
-.logo{
-    font-size:48px;
-    font-weight:900;
-    letter-spacing:6px;
-    color:#fff;
-    text-shadow:
-        0 0 10px #168dff,
-        0 0 30px #168dff;
-}
-
-.subtitle{
-    margin-top:10px;
-    color:#8fc9ff;
-    letter-spacing:5px;
-    font-size:11px;
-}
-
-#startBtn,
-#restartBtn{
-    margin-top:38px;
-    width:220px;
-    padding:16px;
-    border:1px solid #42aaff;
-    border-radius:12px;
-    background:linear-gradient(180deg,#168dff,#0750a8);
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    letter-spacing:3px;
-    box-shadow:
-        0 0 15px rgba(20,140,255,.7),
-        inset 0 0 10px rgba(255,255,255,.15);
-    cursor:pointer;
-    touch-action:manipulation;
-}
-
-#startBtn:active,
-#restartBtn:active{
-    transform:scale(.96);
-}
-
-/* =====================================================
-   GAME OVER
-===================================================== */
-
-#gameover{
-    position:absolute;
-    z-index:40;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    background:rgba(0,0,0,.68);
+.enterText{
     text-align:center;
 }
 
-.gameOverTitle{
-    color:#fff;
-    font-size:42px;
-    font-weight:900;
-    text-shadow:0 0 20px #168dff;
+.enterText h2{
+    margin:0;
+    font-size:30px;
+    letter-spacing:4px;
+    text-shadow:0 0 15px #00aaff;
 }
 
-.finalScore{
-    color:#75bdff;
-    margin-top:14px;
-    font-size:18px;
+.enterText p{
+    color:#69cfff;
+    font-size:12px;
+    letter-spacing:2px;
 }
 
-/* =====================================================
+/* =========================
    CONTROLS
-===================================================== */
+========================= */
 
 #controls{
     position:absolute;
-    z-index:50;
     left:0;
     right:0;
-    bottom:18px;
+    bottom:22px;
+    z-index:40;
     display:flex;
-    justify-content:center;
-    gap:8px;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 18px;
     pointer-events:none;
 }
 
 .controlGroup{
     display:flex;
-    gap:8px;
+    gap:10px;
     pointer-events:auto;
 }
 
-.controlBtn{
-    width:62px;
-    height:52px;
-    border-radius:12px;
-    border:1px solid rgba(70,170,255,.55);
-    background:rgba(0,15,35,.72);
+.controlButton{
+    width:65px;
+    height:65px;
+    border-radius:50%;
     color:white;
-    font-size:20px;
-    box-shadow:0 0 12px rgba(0,120,255,.18);
-    touch-action:manipulation;
+    font-size:25px;
+    font-weight:bold;
+    background:rgba(0,20,45,.75);
+    border:1px solid rgba(0,190,255,.45);
+    box-shadow:0 0 15px rgba(0,120,255,.2);
 }
 
-.controlBtn:active{
+.controlButton:active{
     transform:scale(.9);
-    background:rgba(20,100,200,.8);
+    background:rgba(0,120,255,.65);
 }
 
-/* small phones */
-@media(max-height:600px){
-    .controlBtn{
-        height:45px;
-        width:55px;
-    }
+/* =========================
+   GAME OVER
+========================= */
 
-    .logo{
-        font-size:38px;
-    }
+#gameOver{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,.75);
+    backdrop-filter:blur(7px);
+}
+
+.gameOverBox{
+    width:min(90%,390px);
+    padding:30px;
+    text-align:center;
+    border-radius:22px;
+    background:#050914;
+    border:1px solid rgba(0,180,255,.35);
+}
+
+.gameOverTitle{
+    font-size:38px;
+    font-weight:900;
+    color:#ff365c;
+    text-shadow:0 0 15px #ff174f;
+}
+
+.finalScore{
+    margin-top:15px;
+    font-size:22px;
+}
+
+.restartButton{
+    width:100%;
+    margin-top:25px;
+    padding:16px;
+    border-radius:12px;
+    color:white;
+    background:linear-gradient(90deg,#006cff,#00baff);
+    font-weight:bold;
+    font-size:18px;
 }
 </style>
+</head>
 
-<!--
-=========================================================
-THREE.JS IMPORT MAP
-This fixes the GLTFLoader "three" module problem.
-=========================================================
--->
+<body>
+
+<!-- =====================================================
+     LOADING SCREEN
+===================================================== -->
+
+<div id="loadingScreen">
+
+    <div class="loadingBox">
+
+        <div class="loadingScene">
+
+            <div class="loadingMoon"></div>
+
+            <div class="loadingRoad"></div>
+
+            <div class="runnerSilhouette">
+                <div class="runnerHead"></div>
+                <div class="runnerBody"></div>
+                <div class="runnerLeg left"></div>
+                <div class="runnerLeg right"></div>
+            </div>
+
+        </div>
+
+        <div class="loadingTitle">SHADOW RUSH</div>
+
+        <div class="loadingText" id="loadingText">
+            INITIALIZING SYSTEM...
+        </div>
+
+        <div class="progress">
+            <div class="progressBar" id="progressBar"></div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN MENU
+===================================================== -->
+
+<div id="menu">
+
+    <div class="menuBox">
+
+        <div class="logo">SHADOW RUSH</div>
+
+        <div class="subtitle">
+            3D ENDLESS RUNNER
+        </div>
+
+        <button
+            id="startButton"
+            class="startButton"
+            type="button">
+            START RUN
+        </button>
+
+        <div class="smallInfo">
+            RUN • DODGE • JUMP • SURVIVE
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     GAME
+===================================================== -->
+
+<div id="game">
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="loadingGame">
+        <div class="enterText">
+            <h2>ENTERING SHADOW</h2>
+            <p id="engineStatus">LOADING 3D ENGINE...</p>
+        </div>
+    </div>
+
+    <div id="hud">
+
+        <div class="hudBox">
+            <div class="hudLabel">SCORE</div>
+            <div class="hudValue" id="score">0</div>
+        </div>
+
+        <div class="hudBox">
+            <div class="hudLabel">COINS</div>
+            <div class="hudValue" id="coins">0</div>
+        </div>
+
+        <div class="hudBox">
+            <div class="hudLabel">SPEED</div>
+            <div class="hudValue" id="speed">0</div>
+        </div>
+
+        <div class="hudBox">
+            <div class="hudLabel">BEST</div>
+            <div class="hudValue" id="best">0</div>
+        </div>
+
+    </div>
+
+
+    <div id="controls">
+
+        <div class="controlGroup">
+
+            <button
+                class="controlButton"
+                id="leftButton"
+                type="button">
+                ◀
+            </button>
+
+            <button
+                class="controlButton"
+                id="rightButton"
+                type="button">
+                ▶
+            </button>
+
+        </div>
+
+        <div class="controlGroup">
+
+            <button
+                class="controlButton"
+                id="jumpButton"
+                type="button">
+                ▲
+            </button>
+
+            <button
+                class="controlButton"
+                id="slideButton"
+                type="button">
+                ▼
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     GAME OVER
+===================================================== -->
+
+<div id="gameOver">
+
+    <div class="gameOverBox">
+
+        <div class="gameOverTitle">
+            RUN OVER
+        </div>
+
+        <div class="finalScore">
+            SCORE: <span id="finalScore">0</span>
+        </div>
+
+        <div class="finalScore">
+            COINS: <span id="finalCoins">0</span>
+        </div>
+
+        <button
+            id="restartButton"
+            class="restartButton"
+            type="button">
+            RUN AGAIN
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     IMPORT MAP
+===================================================== -->
+
 <script type="importmap">
 {
     "imports":{
@@ -437,164 +612,240 @@ This fixes the GLTFLoader "three" module problem.
 }
 </script>
 
-</head>
-
-<body>
 
 <!-- =====================================================
-     LOADING PICTURE
+     IMPORTANT:
+     THIS IS A NORMAL SCRIPT.
+     START BUTTON DOES NOT DEPEND ON THREE.JS.
 ===================================================== -->
 
-<div id="loadingScreen">
+<script>
 
-    <div class="loadingScene">
+(function(){
 
-        <div class="cityGlow"></div>
-        <div class="roadPicture"></div>
-        <div class="roadLine"></div>
+    const loadingScreen =
+        document.getElementById("loadingScreen");
 
-        <div class="runnerSilhouette">
-            <div class="head"></div>
-            <div class="body"></div>
-            <div class="arm1"></div>
-            <div class="arm2"></div>
-            <div class="leg1"></div>
-            <div class="leg2"></div>
-        </div>
+    const menu =
+        document.getElementById("menu");
 
-    </div>
+    const startButton =
+        document.getElementById("startButton");
 
-    <div class="loadingContent">
-        <div class="loadingTitle">SHADOW RUSH</div>
-        <div class="loadingSub">ENTER THE SHADOW</div>
-    </div>
+    const progressBar =
+        document.getElementById("progressBar");
 
-    <div class="loadingBottom">
-        <div class="loadingText" id="loadingText">LOADING...</div>
+    const loadingText =
+        document.getElementById("loadingText");
 
-        <div class="loadingBar">
-            <div class="loadingProgress" id="loadingProgress"></div>
-        </div>
-    </div>
+    let loadingProgress = 0;
 
-</div>
+    function loadingStep(){
+
+        loadingProgress += Math.random() * 12 + 5;
+
+        if(loadingProgress > 100){
+            loadingProgress = 100;
+        }
+
+        progressBar.style.width =
+            loadingProgress + "%";
+
+        if(loadingProgress < 30){
+
+            loadingText.textContent =
+                "INITIALIZING SYSTEM...";
+
+        }else if(loadingProgress < 60){
+
+            loadingText.textContent =
+                "LOADING SHADOW CORE...";
+
+        }else if(loadingProgress < 90){
+
+            loadingText.textContent =
+                "PREPARING RUNNER...";
+
+        }else{
+
+            loadingText.textContent =
+                "SYSTEM READY";
+
+        }
+
+        if(loadingProgress < 100){
+
+            setTimeout(loadingStep,180);
+
+        }else{
+
+            setTimeout(function(){
+
+                loadingScreen.style.display =
+                    "none";
+
+                menu.style.display =
+                    "flex";
+
+            },500);
+
+        }
+
+    }
+
+    loadingStep();
+
+
+    /*
+       GLOBAL START FUNCTION
+
+       This is intentionally outside the
+       Three.js module.
+    */
+
+    window.startGame = function(){
+
+        console.log("SHADOW RUSH: START PRESSED");
+
+        menu.style.display =
+            "none";
+
+        document.getElementById("game")
+            .style.display = "block";
+
+        if(window.bootShadowRush){
+
+            window.bootShadowRush();
+
+        }else{
+
+            const status =
+                document.getElementById("engineStatus");
+
+            status.textContent =
+                "STARTING 3D ENGINE...";
+
+            /*
+               Load the actual game module
+               only after Start is pressed.
+            */
+
+            import("three")
+                .then(function(){
+
+                    return import(
+                        "three/addons/loaders/GLTFLoader.js"
+                    );
+
+                })
+                .then(function(modules){
+
+                    window.THREE_MODULE =
+                        modules;
+
+                    return window.loadShadowRushGame();
+
+                })
+                .catch(function(error){
+
+                    console.error(error);
+
+                    const status =
+                        document.getElementById(
+                            "engineStatus"
+                        );
+
+                    status.textContent =
+                        "3D ENGINE ERROR — RETRYING...";
+
+                    /*
+                       Try the game loader again.
+                    */
+
+                    setTimeout(function(){
+
+                        if(window.loadShadowRushGame){
+
+                            window.loadShadowRushGame();
+
+                        }
+
+                    },1000);
+
+                });
+
+        }
+
+    };
+
+
+    /*
+       Multiple ways of activating the button.
+       This helps on Android browsers.
+    */
+
+    startButton.addEventListener(
+        "click",
+        function(){
+
+            window.startGame();
+
+        },
+        false
+    );
+
+
+    startButton.addEventListener(
+        "touchend",
+        function(event){
+
+            event.preventDefault();
+
+            window.startGame();
+
+        },
+        {
+            passive:false
+        }
+    );
+
+
+    /*
+       RUN AGAIN
+    */
+
+    document.getElementById(
+        "restartButton"
+    ).addEventListener(
+        "click",
+        function(){
+
+            document.getElementById(
+                "gameOver"
+            ).style.display = "none";
+
+            if(window.restartShadowRush){
+
+                window.restartShadowRush();
+
+            }
+
+        }
+    );
+
+})();
+
+</script>
+
 
 <!-- =====================================================
-     GAME
-===================================================== -->
-
-<div id="game"></div>
-
-<!-- =====================================================
-     HUD
-===================================================== -->
-
-<div id="hud">
-
-    <div class="hudBox">
-        SCORE
-        <div class="hudValue" id="score">0</div>
-    </div>
-
-    <div class="hudBox">
-        COINS
-        <div class="hudValue" id="coins">0</div>
-    </div>
-
-    <div class="hudBox">
-        SPEED
-        <div class="hudValue" id="speed">1.0</div>
-    </div>
-
-    <div class="hudBox">
-        BEST
-        <div class="hudValue" id="best">0</div>
-    </div>
-
-</div>
-
-<!-- =====================================================
-     MENU
-===================================================== -->
-
-<div id="menu">
-
-    <div class="logo">SHADOW RUSH</div>
-
-    <div class="subtitle">
-        3D ENDLESS RUNNER
-    </div>
-
-    <button id="startBtn" type="button">
-        START RUN
-    </button>
-
-</div>
-
-<!-- =====================================================
-     GAME OVER
-===================================================== -->
-
-<div id="gameover">
-
-    <div class="gameOverTitle">
-        RUN ENDED
-    </div>
-
-    <div class="finalScore">
-        SCORE: <span id="finalScore">0</span>
-    </div>
-
-    <button id="restartBtn" type="button">
-        RUN AGAIN
-    </button>
-
-</div>
-
-<!-- =====================================================
-     CONTROLS
-===================================================== -->
-
-<div id="controls">
-
-    <div class="controlGroup">
-
-        <button class="controlBtn" id="leftBtn" type="button">
-            ◀
-        </button>
-
-        <button class="controlBtn" id="jumpBtn" type="button">
-            ▲
-        </button>
-
-        <button class="controlBtn" id="slideBtn" type="button">
-            ▼
-        </button>
-
-        <button class="controlBtn" id="rightBtn" type="button">
-            ▶
-        </button>
-
-    </div>
-
-</div>
-
-<!-- =====================================================
-     MAIN GAME SCRIPT
+     THREE.JS GAME MODULE
 ===================================================== -->
 
 <script type="module">
 
-import * as THREE from "three";
-
-import {
-    GLTFLoader
-} from "three/addons/loaders/GLTFLoader.js";
-
-
-/* =====================================================
-   BASIC VARIABLES
-===================================================== */
+let THREE;
+let GLTFLoader;
 
 let scene;
 let camera;
@@ -602,92 +853,155 @@ let renderer;
 
 let player;
 let playerModel = null;
-let playerMixer = null;
+
+let road;
 
 let obstacles = [];
-let coinObjects = [];
+let coinsObjects = [];
 let particles = [];
 
-let lane = 1;
-let targetX = 0;
-
-const lanes = [-3,0,3];
-
-let gameRunning = false;
+let animationStarted = false;
+let gameStarted = false;
 let gameOver = false;
 
-let score = 0;
-let coins = 0;
+let currentLane = 1;
 
-let speed = .65;
+let laneX = [-3,0,3];
+
+let playerY = 1.1;
+
+let verticalVelocity = 0;
+
+let jumping = false;
+let sliding = false;
+
+let score = 0;
+let coinCount = 0;
+
+let speed = 0.38;
+
 let distance = 0;
 
 let spawnTimer = 0;
 let coinTimer = 0;
 
-let verticalVelocity = 0;
-let isJumping = false;
-let isSliding = false;
-let slideTimer = 0;
+let lastTime = 0;
 
-let best =
-    Number(localStorage.getItem("shadowRushBest") || 0);
+const canvas =
+    document.getElementById("gameCanvas");
 
-let modelLoaded = false;
+const gameLoading =
+    document.getElementById("loadingGame");
 
-const clock = new THREE.Clock();
-
-
-/* =====================================================
-   LOADING SCREEN
-===================================================== */
-
-const loadingScreen =
-    document.getElementById("loadingScreen");
-
-const loadingProgress =
-    document.getElementById("loadingProgress");
-
-const loadingText =
-    document.getElementById("loadingText");
+const engineStatus =
+    document.getElementById("engineStatus");
 
 
-function setLoading(percent,text){
+/* ==========================================
+   LOAD GAME ENGINE
+========================================== */
 
-    loadingProgress.style.width =
-        Math.max(0,Math.min(100,percent)) + "%";
+window.loadShadowRushGame = async function(){
 
-    loadingText.textContent = text;
-}
+    if(gameStarted){
+
+        return;
+
+    }
+
+    try{
+
+        engineStatus.textContent =
+            "LOADING 3D ENGINE...";
+
+        /*
+           Import Three.js.
+        */
+
+        const threeModule =
+            await import(
+                "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+            );
+
+        THREE = threeModule;
 
 
-function hideLoading(){
+        /*
+           Try GLTFLoader separately.
+        */
 
-    setLoading(100,"READY");
+        try{
 
-    setTimeout(()=>{
+            const loaderModule =
+                await import(
+                    "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js"
+                );
 
-        loadingScreen.classList.add("hide");
+            GLTFLoader =
+                loaderModule.GLTFLoader;
 
-    },500);
-}
+        }catch(error){
+
+            console.warn(
+                "GLTF model loader unavailable.",
+                error
+            );
+
+            GLTFLoader = null;
+
+        }
 
 
-/* =====================================================
-   THREE.JS SETUP
-===================================================== */
+        engineStatus.textContent =
+            "BUILDING SHADOW WORLD...";
 
-function initThree(){
+        initGame();
 
-    setLoading(20,"BUILDING WORLD...");
+        gameStarted = true;
 
-    scene = new THREE.Scene();
+        gameLoading.style.display =
+            "none";
+
+        startAnimation();
+
+    }catch(error){
+
+        console.error(
+            "Shadow Rush engine error:",
+            error
+        );
+
+        engineStatus.textContent =
+            "ENGINE FAILED — TAP START AGAIN";
+
+        gameLoading.style.display =
+            "flex";
+
+        gameStarted = false;
+
+    }
+
+};
+
+
+/* ==========================================
+   INIT
+========================================== */
+
+function initGame(){
+
+    scene =
+        new THREE.Scene();
 
     scene.background =
-        new THREE.Color(0x050912);
+        new THREE.Color(0x02040b);
 
     scene.fog =
-        new THREE.Fog(0x050912,35,170);
+        new THREE.Fog(
+            0x02040b,
+            25,
+            180
+        );
 
 
     camera =
@@ -695,19 +1009,20 @@ function initThree(){
             65,
             window.innerWidth /
             window.innerHeight,
-            .1,
+            0.1,
             500
         );
 
     camera.position.set(
         0,
-        4.2,
-        9
+        4.5,
+        8
     );
 
 
     renderer =
         new THREE.WebGLRenderer({
+            canvas:canvas,
             antialias:true,
             powerPreference:"high-performance"
         });
@@ -718,115 +1033,146 @@ function initThree(){
     );
 
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio || 1,1.6)
+        Math.min(
+            window.devicePixelRatio || 1,
+            1.5
+        )
     );
 
     renderer.shadowMap.enabled = true;
 
+    renderer.shadowMap.type =
+        THREE.PCFSoftShadowMap;
+
     renderer.outputColorSpace =
         THREE.SRGBColorSpace;
 
-    document
-        .getElementById("game")
-        .appendChild(renderer.domElement);
 
+    /*
+       LIGHTS
+    */
 
-    createLights();
-
-    createRoad();
-
-    createPlayer();
-
-    createParticles();
-
-    setLoading(45,"LOADING RUNNER...");
-
-    loadHumanModel();
-
-    updateHUD();
-}
-
-
-/* =====================================================
-   LIGHTING
-===================================================== */
-
-function createLights(){
-
-    const hemi =
+    const ambient =
         new THREE.HemisphereLight(
-            0x6fa8ff,
-            0x07101c,
+            0x80bfff,
+            0x02030a,
+            1.5
+        );
+
+    scene.add(ambient);
+
+
+    const moonLight =
+        new THREE.DirectionalLight(
+            0xffffff,
             2
         );
 
-    scene.add(hemi);
-
-
-    const moon =
-        new THREE.DirectionalLight(
-            0x9bc8ff,
-            2.5
-        );
-
-    moon.position.set(
+    moonLight.position.set(
         -20,
         30,
-        10
+        20
     );
 
-    moon.castShadow = true;
+    moonLight.castShadow = true;
 
-    moon.shadow.mapSize.width = 1024;
-    moon.shadow.mapSize.height = 1024;
+    moonLight.shadow.mapSize.width =
+        1024;
 
-    scene.add(moon);
+    moonLight.shadow.mapSize.height =
+        1024;
+
+    scene.add(moonLight);
 
 
     const blueLight =
         new THREE.PointLight(
-            0x168dff,
-            12,
-            45
+            0x008cff,
+            30,
+            40
         );
 
     blueLight.position.set(
         0,
         5,
-        10
+        5
     );
 
     scene.add(blueLight);
+
+
+    /*
+       ROAD
+    */
+
+    createRoad();
+
+
+    /*
+       ENVIRONMENT
+    */
+
+    createEnvironment();
+
+
+    /*
+       PLAYER
+    */
+
+    createPlayer();
+
+
+    /*
+       TRY REAL 3D HUMAN MODEL.
+       If it fails, the procedural player remains.
+    */
+
+    loadHumanModel();
+
+
+    /*
+       EVENTS
+    */
+
+    setupControls();
+
+    window.addEventListener(
+        "resize",
+        onResize
+    );
+
 }
 
 
-/* =====================================================
+/* ==========================================
    ROAD
-===================================================== */
+========================================== */
 
 function createRoad(){
 
+    const roadGeometry =
+        new THREE.BoxGeometry(
+            9,
+            .3,
+            500
+        );
+
     const roadMaterial =
         new THREE.MeshStandardMaterial({
-            color:0x101820,
-            roughness:.85,
+            color:0x080b12,
+            roughness:.75,
             metalness:.15
         });
 
-
-    const road =
+    road =
         new THREE.Mesh(
-            new THREE.BoxGeometry(
-                9,
-                .3,
-                500
-            ),
+            roadGeometry,
             roadMaterial
         );
 
     road.position.set(
         0,
-        -.25,
+        -0.2,
         -180
     );
 
@@ -835,89 +1181,277 @@ function createRoad(){
     scene.add(road);
 
 
-    /* lane lines */
+    /*
+       Lane lines
+    */
 
-    for(let x of [-1.5,1.5]){
+    for(let i=0;i<100;i++){
 
-        for(let z=0;z>-500;z-=8){
+        for(const x of [-1.5,1.5]){
 
-            const marker =
-                new THREE.Mesh(
-                    new THREE.BoxGeometry(
-                        .08,
-                        .03,
-                        3
-                    ),
-                    new THREE.MeshBasicMaterial({
-                        color:0x399cff
-                    })
+            const geometry =
+                new THREE.BoxGeometry(
+                    .08,
+                    .025,
+                    3
                 );
 
-            marker.position.set(
+            const material =
+                new THREE.MeshBasicMaterial({
+                    color:0x159dff
+                });
+
+            const line =
+                new THREE.Mesh(
+                    geometry,
+                    material
+                );
+
+            line.position.set(
                 x,
-                -.07,
-                z
+                -.02,
+                5 - i * 5
             );
 
-            scene.add(marker);
+            scene.add(line);
+
         }
+
     }
 
-
-    /* side lights */
-
-    for(let z=0;z>-500;z-=10){
-
-        for(let x of [-6,6]){
-
-            const pole =
-                new THREE.Mesh(
-                    new THREE.BoxGeometry(
-                        .08,
-                        1.8,
-                        .08
-                    ),
-                    new THREE.MeshStandardMaterial({
-                        color:0x1a2735
-                    })
-                );
-
-            pole.position.set(
-                x,
-                .8,
-                z
-            );
-
-            scene.add(pole);
-
-
-            const lamp =
-                new THREE.Mesh(
-                    new THREE.SphereGeometry(
-                        .11,
-                        8,
-                        8
-                    ),
-                    new THREE.MeshBasicMaterial({
-                        color:0x168dff
-                    })
-                );
-
-            lamp.position.set(
-                x,
-                1.8,
-                z
-            );
-
-            scene.add(lamp);
-        }
-    }
 }
 
 
-/* =====================================================
-   PLAYER FALLBACK
-===================================================== */
+/* ==========================================
+   ENVIRONMENT
+========================================== */
+
+function createEnvironment(){
+
+    for(let i=0;i<60;i++){
+
+        const side =
+            Math.random() < .5
+                ? -1
+                : 1;
+
+        const x =
+            side *
+            (7 + Math.random()*8);
+
+        const z =
+            -Math.random()*300;
+
+        createBuilding(
+            x,
+            z
+        );
+
+    }
+
+
+    /*
+       Light poles
+    */
+
+    for(let i=0;i<70;i++){
+
+        const side =
+            i%2 === 0 ? -1 : 1;
+
+        createLightPole(
+            side * 6.3,
+            -i * 5
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   BUILDINGS
+========================================== */
+
+function createBuilding(x,z){
+
+    const width =
+        2 + Math.random()*4;
+
+    const height =
+        5 + Math.random()*15;
+
+    const depth =
+        3 + Math.random()*5;
+
+    const geometry =
+        new THREE.BoxGeometry(
+            width,
+            height,
+            depth
+        );
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:
+                new THREE.Color(
+                    .015,
+                    .025 + Math.random()*.03,
+                    .06 + Math.random()*.08
+                ),
+            roughness:.9
+        });
+
+    const building =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    building.position.set(
+        x,
+        height/2 - .2,
+        z
+    );
+
+    building.castShadow = true;
+
+    building.receiveShadow = true;
+
+    scene.add(building);
+
+
+    /*
+       Windows
+    */
+
+    for(let y=2;y<height-1;y+=2.5){
+
+        const windowGeometry =
+            new THREE.BoxGeometry(
+                .35,
+                .35,
+                .03
+            );
+
+        const windowMaterial =
+            new THREE.MeshBasicMaterial({
+                color:
+                    Math.random() > .4
+                    ? 0x159cff
+                    : 0x102030
+            });
+
+        for(let w=0;w<2;w++){
+
+            const windowMesh =
+                new THREE.Mesh(
+                    windowGeometry,
+                    windowMaterial
+                );
+
+            windowMesh.position.set(
+                x -
+                width/2 +
+                .5 +
+                w*(width-1),
+                y,
+                z - depth/2 - .02
+            );
+
+            scene.add(windowMesh);
+
+        }
+
+    }
+
+}
+
+
+/* ==========================================
+   LIGHT POLES
+========================================== */
+
+function createLightPole(x,z){
+
+    const poleGeometry =
+        new THREE.CylinderGeometry(
+            .04,
+            .06,
+            4,
+            8
+        );
+
+    const poleMaterial =
+        new THREE.MeshStandardMaterial({
+            color:0x172231,
+            metalness:.8,
+            roughness:.3
+        });
+
+    const pole =
+        new THREE.Mesh(
+            poleGeometry,
+            poleMaterial
+        );
+
+    pole.position.set(
+        x,
+        1.8,
+        z
+    );
+
+    scene.add(pole);
+
+
+    const lamp =
+        new THREE.PointLight(
+            0x00aaff,
+            8,
+            10
+        );
+
+    lamp.position.set(
+        x,
+        3.8,
+        z
+    );
+
+    scene.add(lamp);
+
+
+    const lampGeometry =
+        new THREE.SphereGeometry(
+            .12,
+            8,
+            8
+        );
+
+    const lampMaterial =
+        new THREE.MeshBasicMaterial({
+            color:0x00bfff
+        });
+
+    const bulb =
+        new THREE.Mesh(
+            lampGeometry,
+            lampMaterial
+        );
+
+    bulb.position.set(
+        x,
+        3.8,
+        z
+    );
+
+    scene.add(bulb);
+
+}
+
+
+/* ==========================================
+   PROCEDURAL HUMAN
+========================================== */
 
 function createPlayer(){
 
@@ -930,163 +1464,257 @@ function createPlayer(){
         3
     );
 
-    scene.add(player);
 
+    /*
+       Body
+    */
 
-    const material =
+    const bodyMaterial =
         new THREE.MeshStandardMaterial({
-            color:0x168dff,
-            roughness:.55,
-            metalness:.25
+            color:0x111827,
+            roughness:.65,
+            metalness:.15
         });
 
 
-    const dark =
+    const skinMaterial =
         new THREE.MeshStandardMaterial({
-            color:0x07101c,
+            color:0x9b6a4f,
             roughness:.8
         });
 
 
-    /* body */
-
     const body =
         new THREE.Mesh(
             new THREE.CapsuleGeometry(
-                .42,
-                1.05,
+                .32,
+                .75,
                 6,
                 12
             ),
-            material
+            bodyMaterial
         );
 
-    body.position.y = 1.15;
+    body.position.y =
+        1.15;
 
     body.castShadow = true;
 
     player.add(body);
 
 
-    /* head */
+    /*
+       Head
+    */
 
     const head =
         new THREE.Mesh(
             new THREE.SphereGeometry(
-                .36,
+                .27,
                 16,
                 16
             ),
-            dark
+            skinMaterial
         );
 
-    head.position.y = 2.15;
+    head.position.y =
+        1.9;
 
     head.castShadow = true;
 
     player.add(head);
 
 
-    /* arms */
+    /*
+       Hair
+    */
 
-    const armGeo =
+    const hair =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .285,
+                16,
+                16,
+                0,
+                Math.PI*2,
+                0,
+                Math.PI*.55
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0x050505,
+                roughness:.9
+            })
+        );
+
+    hair.position.y =
+        2.02;
+
+    hair.castShadow = true;
+
+    player.add(hair);
+
+
+    /*
+       Arms
+    */
+
+    const armGeometry =
+        new THREE.CapsuleGeometry(
+            .11,
+            .55,
+            5,
+            8
+        );
+
+    const leftArm =
+        new THREE.Mesh(
+            armGeometry,
+            bodyMaterial
+        );
+
+    leftArm.position.set(
+        -.43,
+        1.2,
+        0
+    );
+
+    leftArm.rotation.z =
+        -.25;
+
+    leftArm.castShadow = true;
+
+    player.add(leftArm);
+
+
+    const rightArm =
+        new THREE.Mesh(
+            armGeometry,
+            bodyMaterial
+        );
+
+    rightArm.position.set(
+        .43,
+        1.2,
+        0
+    );
+
+    rightArm.rotation.z =
+        .25;
+
+    rightArm.castShadow = true;
+
+    player.add(rightArm);
+
+
+    /*
+       Legs
+    */
+
+    const legGeometry =
         new THREE.CapsuleGeometry(
             .13,
-            .72,
+            .65,
             5,
             8
         );
 
-
-    const arm1 =
+    const leftLeg =
         new THREE.Mesh(
-            armGeo,
-            dark
+            legGeometry,
+            bodyMaterial
         );
 
-    arm1.position.set(
-        -.55,
-        1.15,
+    leftLeg.position.set(
+        -.18,
+        .42,
         0
     );
 
-    arm1.rotation.z = -.18;
+    leftLeg.castShadow = true;
 
-    arm1.castShadow = true;
-
-    player.add(arm1);
+    player.add(leftLeg);
 
 
-    const arm2 =
+    const rightLeg =
         new THREE.Mesh(
-            armGeo,
-            dark
+            legGeometry,
+            bodyMaterial
         );
 
-    arm2.position.set(
-        .55,
-        1.15,
+    rightLeg.position.set(
+        .18,
+        .42,
         0
     );
 
-    arm2.rotation.z = .18;
+    rightLeg.castShadow = true;
 
-    arm2.castShadow = true;
-
-    player.add(arm2);
+    player.add(rightLeg);
 
 
-    /* legs */
+    /*
+       Shoes
+    */
 
-    const legGeo =
-        new THREE.CapsuleGeometry(
-            .16,
-            .78,
-            5,
-            8
+    const shoeMaterial =
+        new THREE.MeshStandardMaterial({
+            color:0x050505,
+            roughness:.5
+        });
+
+    const shoeGeometry =
+        new THREE.BoxGeometry(
+            .22,
+            .12,
+            .45
         );
 
-
-    const leg1 =
+    const shoe1 =
         new THREE.Mesh(
-            legGeo,
-            dark
+            shoeGeometry,
+            shoeMaterial
         );
 
-    leg1.position.set(
-        -.23,
-        .35,
-        0
+    shoe1.position.set(
+        -.18,
+        .05,
+        -.08
     );
 
-    leg1.castShadow = true;
-
-    player.add(leg1);
+    player.add(shoe1);
 
 
-    const leg2 =
+    const shoe2 =
         new THREE.Mesh(
-            legGeo,
-            dark
+            shoeGeometry,
+            shoeMaterial
         );
 
-    leg2.position.set(
-        .23,
-        .35,
-        0
+    shoe2.position.set(
+        .18,
+        .05,
+        -.08
     );
 
-    leg2.castShadow = true;
+    player.add(shoe2);
 
-    player.add(leg2);
+
+    scene.add(player);
+
 }
 
 
-/* =====================================================
+/* ==========================================
    REAL HUMAN MODEL
-===================================================== */
+========================================== */
 
 function loadHumanModel(){
+
+    if(!GLTFLoader){
+
+        return;
+
+    }
 
     const loader =
         new GLTFLoader();
@@ -1101,25 +1729,38 @@ function loadHumanModel(){
 
         function(gltf){
 
+            if(!gltf || !gltf.scene){
+
+                return;
+
+            }
+
             playerModel =
                 gltf.scene;
 
             playerModel.scale.set(
-                1.15,
-                1.15,
-                1.15
+                .95,
+                .95,
+                .95
             );
 
-            playerModel.position.y =
-                0;
+            playerModel.position.set(
+                0,
+                0,
+                0
+            );
+
 
             playerModel.traverse(
-                function(obj){
+                function(object){
 
-                    if(obj.isMesh){
+                    if(object.isMesh){
 
-                        obj.castShadow = true;
-                        obj.receiveShadow = true;
+                        object.castShadow =
+                            true;
+
+                        object.receiveShadow =
+                            true;
 
                     }
 
@@ -1127,644 +1768,681 @@ function loadHumanModel(){
             );
 
 
-            player.add(playerModel);
+            /*
+               Hide procedural player.
+            */
 
+            player.visible = false;
 
-            /* hide fallback */
-
-            player.children.forEach(
-                function(child){
-
-                    if(
-                        child !== playerModel &&
-                        child.type === "Mesh"
-                    ){
-
-                        child.visible = false;
-                    }
-
-                }
+            player.add(
+                playerModel
             );
 
+
+            /*
+               Animation support.
+            */
 
             if(
                 gltf.animations &&
                 gltf.animations.length
             ){
 
-                playerMixer =
+                const mixer =
                     new THREE.AnimationMixer(
                         playerModel
                     );
 
-                const action =
-                    playerMixer.clipAction(
-                        gltf.animations[0]
+                window.shadowMixer =
+                    mixer;
+
+                let clip =
+                    gltf.animations.find(
+                        a =>
+                            /walk|run|idle/i
+                            .test(a.name)
                     );
 
-                action.play();
-            }
+                if(!clip){
 
+                    clip =
+                        gltf.animations[0];
 
-            modelLoaded = true;
+                }
 
-            setLoading(
-                100,
-                "READY"
-            );
+                if(clip){
 
-            setTimeout(
-                hideLoading,
-                400
-            );
+                    const action =
+                        mixer.clipAction(
+                            clip
+                        );
 
-        },
+                    action.play();
 
-        function(xhr){
+                }
 
-            if(xhr.total){
-
-                const percent =
-                    45 +
-                    (xhr.loaded /
-                    xhr.total) * 45;
-
-                setLoading(
-                    percent,
-                    "LOADING RUNNER..."
-                );
             }
 
         },
+
+        undefined,
 
         function(error){
 
-            console.log(
-                "Human model unavailable. Using fallback runner.",
+            console.warn(
+                "Human model failed. Using built-in 3D runner.",
                 error
             );
 
-            modelLoaded = true;
-
-            setLoading(
-                100,
-                "READY"
-            );
-
-            setTimeout(
-                hideLoading,
-                500
-            );
         }
+
     );
+
 }
 
 
-/* =====================================================
-   PARTICLES
-===================================================== */
+/* ==========================================
+   OBSTACLES
+========================================== */
 
-function createParticles(){
+function spawnObstacle(){
 
-    const geo =
-        new THREE.SphereGeometry(
-            .025,
-            5,
-            5
+    const lane =
+        Math.floor(
+            Math.random()*3
         );
 
-    const mat =
-        new THREE.MeshBasicMaterial({
-            color:0x268fff
-        });
+    const type =
+        Math.random() < .5
+        ? "block"
+        : "high";
 
 
-    for(let i=0;i<80;i++){
+    let obstacle;
 
-        const p =
-            new THREE.Mesh(
-                geo,
-                mat
+
+    if(type === "block"){
+
+        const geometry =
+            new THREE.BoxGeometry(
+                1.8,
+                1.5,
+                1.5
             );
 
-        p.position.set(
-            THREE.MathUtils.randFloat(
-                -7,
-                7
-            ),
-            THREE.MathUtils.randFloat(
-                .1,
-                5
-            ),
-            THREE.MathUtils.randFloat(
-                -150,
-                5
-            )
-        );
+        const material =
+            new THREE.MeshStandardMaterial({
+                color:0x131b28,
+                metalness:.4,
+                roughness:.45,
+                emissive:0x002b50
+            });
 
-        p.userData.speed =
-            THREE.MathUtils.randFloat(
-                .3,
+        obstacle =
+            new THREE.Mesh(
+                geometry,
+                material
+            );
+
+        obstacle.position.y =
+            .65;
+
+    }else{
+
+        const geometry =
+            new THREE.BoxGeometry(
+                2.4,
+                .7,
                 1.2
             );
 
-        scene.add(p);
+        const material =
+            new THREE.MeshStandardMaterial({
+                color:0x16202e,
+                metalness:.4,
+                roughness:.45,
+                emissive:0x300000
+            });
 
-        particles.push(p);
+        obstacle =
+            new THREE.Mesh(
+                geometry,
+                material
+            );
+
+        obstacle.position.y =
+            2.1;
+
     }
-}
 
 
-/* =====================================================
-   OBSTACLES
-===================================================== */
+    obstacle.position.x =
+        laneX[lane];
 
-function createObstacle(){
+    obstacle.position.z =
+        -100;
 
-    const obstacle =
-        new THREE.Group();
+    obstacle.castShadow = true;
 
+    obstacle.receiveShadow = true;
 
-    const high =
-        Math.random() < .25;
-
-
-    const material =
-        new THREE.MeshStandardMaterial({
-            color:high
-                ? 0x9c2bff
-                : 0xff304f,
-            emissive:high
-                ? 0x240044
-                : 0x3d0010,
-            roughness:.45,
-            metalness:.25
-        });
-
-
-    const mesh =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                high ? 2.2 : 2,
-                high ? .55 : 1.5,
-                .9
-            ),
-            material
-        );
-
-
-    mesh.position.y =
-        high ? 2.0 : .75;
-
-    mesh.castShadow = true;
-
-    obstacle.add(mesh);
-
-
-    obstacle.position.set(
-        lanes[
-            Math.floor(
-                Math.random()*3
-            )
-        ],
-        0,
-        -120
-    );
-
-
-    obstacle.userData.high = high;
+    obstacle.userData.type =
+        type;
 
     scene.add(obstacle);
 
-    obstacles.push({
-        mesh:obstacle,
-        high:high
-    });
+    obstacles.push(obstacle);
+
 }
 
 
-/* =====================================================
+/* ==========================================
    COINS
-===================================================== */
+========================================== */
 
-function createCoin(){
+function spawnCoin(){
+
+    const lane =
+        Math.floor(
+            Math.random()*3
+        );
+
+    const geometry =
+        new THREE.TorusGeometry(
+            .35,
+            .10,
+            10,
+            20
+        );
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:0xffd500,
+            emissive:0xff9900,
+            emissiveIntensity:1
+        });
 
     const coin =
         new THREE.Mesh(
-            new THREE.TorusGeometry(
-                .32,
-                .09,
-                8,
-                16
-            ),
-            new THREE.MeshStandardMaterial({
-                color:0xffd43b,
-                emissive:0x6b4300,
-                metalness:.8,
-                roughness:.25
-            })
+            geometry,
+            material
         );
 
+    coin.rotation.y =
+        Math.PI/2;
 
     coin.position.set(
-        lanes[
-            Math.floor(
-                Math.random()*3
-            )
-        ],
-        1.25,
-        -120
+        laneX[lane],
+        1.2,
+        -100
     );
-
-
-    coin.rotation.x =
-        Math.PI / 2;
-
 
     scene.add(coin);
 
-    coinObjects.push(coin);
+    coinsObjects.push(coin);
+
 }
 
 
-/* =====================================================
-   START GAME
-===================================================== */
+/* ==========================================
+   CONTROLS
+========================================== */
 
-function startGame(){
+function setupControls(){
 
-    document
-        .getElementById("menu")
-        .style.display="none";
+    function moveLeft(){
+
+        if(!gameStarted || gameOver)
+            return;
+
+        currentLane =
+            Math.max(
+                0,
+                currentLane - 1
+            );
+
+    }
 
 
-    document
-        .getElementById("gameover")
-        .style.display="none";
+    function moveRight(){
+
+        if(!gameStarted || gameOver)
+            return;
+
+        currentLane =
+            Math.min(
+                2,
+                currentLane + 1
+            );
+
+    }
 
 
-    gameRunning = true;
+    function jump(){
+
+        if(!gameStarted || gameOver)
+            return;
+
+        if(!jumping){
+
+            jumping = true;
+
+            verticalVelocity =
+                .19;
+
+        }
+
+    }
+
+
+    function slide(){
+
+        if(!gameStarted || gameOver)
+            return;
+
+        if(!jumping){
+
+            sliding = true;
+
+            setTimeout(
+                function(){
+
+                    sliding = false;
+
+                },
+                650
+            );
+
+        }
+
+    }
+
+
+    setupButton(
+        "leftButton",
+        moveLeft
+    );
+
+    setupButton(
+        "rightButton",
+        moveRight
+    );
+
+    setupButton(
+        "jumpButton",
+        jump
+    );
+
+    setupButton(
+        "slideButton",
+        slide
+    );
+
+
+    /*
+       Keyboard
+    */
+
+    window.addEventListener(
+        "keydown",
+        function(event){
+
+            if(
+                event.key === "ArrowLeft" ||
+                event.key.toLowerCase() === "a"
+            ){
+
+                moveLeft();
+
+            }
+
+            if(
+                event.key === "ArrowRight" ||
+                event.key.toLowerCase() === "d"
+            ){
+
+                moveRight();
+
+            }
+
+            if(
+                event.key === "ArrowUp" ||
+                event.key === " "
+            ){
+
+                jump();
+
+            }
+
+            if(
+                event.key === "ArrowDown" ||
+                event.key.toLowerCase() === "s"
+            ){
+
+                slide();
+
+            }
+
+        }
+    );
+
+
+    /*
+       Swipe
+    */
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+
+    window.addEventListener(
+        "touchstart",
+        function(event){
+
+            if(!event.touches.length)
+                return;
+
+            touchStartX =
+                event.touches[0].clientX;
+
+            touchStartY =
+                event.touches[0].clientY;
+
+        },
+        {
+            passive:true
+        }
+    );
+
+
+    window.addEventListener(
+        "touchend",
+        function(event){
+
+            if(!event.changedTouches.length)
+                return;
+
+            const endX =
+                event.changedTouches[0].clientX;
+
+            const endY =
+                event.changedTouches[0].clientY;
+
+            const dx =
+                endX - touchStartX;
+
+            const dy =
+                endY - touchStartY;
+
+            const absX =
+                Math.abs(dx);
+
+            const absY =
+                Math.abs(dy);
+
+            const threshold =
+                35;
+
+
+            if(
+                absX < threshold &&
+                absY < threshold
+            ){
+
+                return;
+
+            }
+
+
+            if(absX > absY){
+
+                if(dx > 0){
+
+                    moveRight();
+
+                }else{
+
+                    moveLeft();
+
+                }
+
+            }else{
+
+                if(dy < 0){
+
+                    jump();
+
+                }else{
+
+                    slide();
+
+                }
+
+            }
+
+        },
+        {
+            passive:true
+        }
+    );
+
+}
+
+
+/* ==========================================
+   BUTTON HELPER
+========================================== */
+
+function setupButton(id,callback){
+
+    const button =
+        document.getElementById(id);
+
+    button.addEventListener(
+        "click",
+        function(event){
+
+            event.preventDefault();
+
+            callback();
+
+        }
+    );
+
+    button.addEventListener(
+        "touchstart",
+        function(event){
+
+            event.preventDefault();
+
+            callback();
+
+        },
+        {
+            passive:false
+        }
+    );
+
+}
+
+
+/* ==========================================
+   START ANIMATION
+========================================== */
+
+function startAnimation(){
+
+    if(animationStarted){
+
+        return;
+
+    }
+
+    animationStarted = true;
+
     gameOver = false;
 
+    lastTime =
+        performance.now();
 
-    score = 0;
-    coins = 0;
+    requestAnimationFrame(
+        animate
+    );
 
-    speed = .65;
-
-    distance = 0;
-
-    lane = 1;
-    targetX = 0;
+}
 
 
-    verticalVelocity = 0;
+/* ==========================================
+   ANIMATION
+========================================== */
 
-    isJumping = false;
-    isSliding = false;
+function animate(time){
 
-    slideTimer = 0;
-
-    spawnTimer = .8;
-    coinTimer = 1;
-
-
-    player.position.set(
-        0,
-        0,
-        3
+    requestAnimationFrame(
+        animate
     );
 
 
-    obstacles.forEach(
-        function(o){
-            scene.remove(
-                o.mesh
-            );
-        }
-    );
-
-    obstacles.length = 0;
-
-
-    coinObjects.forEach(
-        function(c){
-            scene.remove(c);
-        }
-    );
-
-    coinObjects.length = 0;
-
-
-    updateHUD();
-}
-
-
-/* =====================================================
-   GAME OVER
-===================================================== */
-
-function endGame(){
-
-    if(!gameRunning) return;
-
-    gameRunning = false;
-    gameOver = true;
-
-
-    const final =
-        Math.floor(score);
-
-
-    if(final > best){
-
-        best = final;
-
-        localStorage.setItem(
-            "shadowRushBest",
-            best
-        );
-    }
-
-
-    document
-        .getElementById("finalScore")
-        .textContent = final;
-
-
-    document
-        .getElementById("gameover")
-        .style.display="flex";
-
-
-    updateHUD();
-}
-
-
-/* =====================================================
-   MOVEMENT
-===================================================== */
-
-function moveLeft(){
-
-    if(!gameRunning) return;
-
-    if(lane > 0){
-
-        lane--;
-
-        targetX =
-            lanes[lane];
-    }
-}
-
-
-function moveRight(){
-
-    if(!gameRunning) return;
-
-    if(lane < 2){
-
-        lane++;
-
-        targetX =
-            lanes[lane];
-    }
-}
-
-
-function jump(){
-
-    if(!gameRunning) return;
-
-    if(
-        !isJumping &&
-        !isSliding
-    ){
-
-        verticalVelocity = 8.5;
-
-        isJumping = true;
-    }
-}
-
-
-function slide(){
-
-    if(!gameRunning) return;
-
-    if(
-        !isJumping &&
-        !isSliding
-    ){
-
-        isSliding = true;
-
-        slideTimer = .65;
-    }
-}
-
-
-/* =====================================================
-   COLLISION
-===================================================== */
-
-function checkCollision(obstacle){
-
-    const dx =
-        Math.abs(
-            obstacle.position.x -
-            player.position.x
+    const delta =
+        Math.min(
+            (time - lastTime) / 16.67,
+            2
         );
 
-    const dz =
-        Math.abs(
-            obstacle.position.z -
-            player.position.z
+    lastTime = time;
+
+
+    if(gameOver){
+
+        renderer.render(
+            scene,
+            camera
         );
 
+        return;
 
-    if(
-        dx < 1.15 &&
-        dz < 1.25
-    ){
-
-        if(obstacle.userData.high){
-
-            /* High obstacle requires sliding */
-
-            if(!isSliding){
-
-                endGame();
-            }
-
-        }else{
-
-            /* Low obstacle requires jumping */
-
-            if(player.position.y < .85){
-
-                endGame();
-            }
-        }
     }
-}
 
 
-/* =====================================================
-   UPDATE GAME
-===================================================== */
-
-function updateGame(dt){
-
-    if(!gameRunning) return;
-
-
-    /* speed increases */
-
-    speed += dt * .018;
+    /*
+       SPEED
+    */
 
     speed =
         Math.min(
-            speed,
-            1.65
+            .95,
+            .38 + distance/80000
         );
 
 
     distance +=
-        speed * dt * 20;
+        speed * delta;
 
-
-    score +=
-        speed * dt * 10;
-
-
-    /* lane movement */
-
-    player.position.x +=
-        (
-            targetX -
-            player.position.x
-        ) * Math.min(
-            12 * dt,
-            1
+    score =
+        Math.floor(
+            distance
         );
 
 
-    /* jump */
+    /*
+       PLAYER LANE MOVEMENT
+    */
 
-    if(isJumping){
+    if(player){
 
-        player.position.y +=
-            verticalVelocity * dt;
+        const targetX =
+            laneX[currentLane];
 
-        verticalVelocity -=
-            22 * dt;
+        player.position.x +=
+            (targetX -
+             player.position.x) *
+            .18 *
+            delta;
 
 
-        if(player.position.y <= 0){
+        /*
+           Jump physics
+        */
 
-            player.position.y = 0;
+        if(jumping){
 
-            verticalVelocity = 0;
+            player.position.y +=
+                verticalVelocity *
+                delta;
 
-            isJumping = false;
+            verticalVelocity -=
+                .012 *
+                delta;
+
+            if(
+                player.position.y <= 0
+            ){
+
+                player.position.y = 0;
+
+                verticalVelocity = 0;
+
+                jumping = false;
+
+            }
+
         }
-    }
 
 
-    /* slide */
+        /*
+           Running animation
+        */
 
-    if(isSliding){
+        if(
+            !playerModel ||
+            !player.visible
+        ){
 
-        slideTimer -= dt;
+            const run =
+                Math.sin(
+                    time * .015
+                );
 
-        player.scale.y = .55;
+            player.rotation.z =
+                run * .015;
 
-        player.position.y = 0;
-
-
-        if(slideTimer <= 0){
-
-            isSliding = false;
-
-            player.scale.y = 1;
         }
-    }else{
 
-        player.scale.y =
-            THREE.MathUtils.lerp(
-                player.scale.y,
-                1,
-                10 * dt
-            );
     }
 
 
-    /* human animation */
+    /*
+       Spawn
+    */
 
-    if(playerMixer){
+    spawnTimer +=
+        delta;
 
-        playerMixer.update(dt);
+    coinTimer +=
+        delta;
+
+
+    if(spawnTimer > 55){
+
+        spawnObstacle();
+
+        spawnTimer = 0;
+
     }
 
 
-    /* fallback running animation */
+    if(coinTimer > 22){
 
-    if(!playerModel){
+        spawnCoin();
 
-        const t =
-            performance.now() * .012;
+        coinTimer = 0;
 
-        const amount =
-            isJumping ? 0 : .12;
-
-        player.rotation.z =
-            Math.sin(t) *
-            amount;
-
-        player.position.y +=
-            isJumping
-                ? 0
-                : Math.abs(
-                    Math.sin(t*2)
-                ) * .015;
     }
 
 
-    /* spawn obstacles */
-
-    spawnTimer -= dt;
-
-    if(spawnTimer <= 0){
-
-        createObstacle();
-
-        spawnTimer =
-            Math.max(
-                .55,
-                1.25 -
-                speed * .35
-            ) +
-            Math.random()*.45;
-    }
-
-
-    /* spawn coins */
-
-    coinTimer -= dt;
-
-    if(coinTimer <= 0){
-
-        createCoin();
-
-        coinTimer =
-            .7 +
-            Math.random()*.9;
-    }
-
-
-    /* move obstacles */
+    /*
+       Move obstacles
+    */
 
     for(
         let i=obstacles.length-1;
@@ -1772,489 +2450,380 @@ function updateGame(dt){
         i--
     ){
 
-        const o =
+        const obstacle =
             obstacles[i];
 
-        o.mesh.position.z +=
-            speed * 55 * dt;
+        obstacle.position.z +=
+            speed * delta * 2.5;
 
 
-        o.mesh.rotation.y +=
-            dt * 1.5;
+        /*
+           Collision
+        */
 
+        if(
+            Math.abs(
+                obstacle.position.z -
+                player.position.z
+            ) < 1.35 &&
+            Math.abs(
+                obstacle.position.x -
+                player.position.x
+            ) < 1.15
+        ){
 
-        checkCollision(
-            o.mesh
-        );
+            if(
+                obstacle.userData.type ===
+                "block"
+            ){
+
+                if(
+                    player.position.y <
+                    .75
+                ){
+
+                    endGame();
+
+                    return;
+
+                }
+
+            }else{
+
+                if(
+                    player.position.y >
+                    1.25 &&
+                    !sliding
+                ){
+
+                    endGame();
+
+                    return;
+
+                }
+
+            }
+
+        }
 
 
         if(
-            o.mesh.position.z > 15
+            obstacle.position.z > 15
         ){
 
             scene.remove(
-                o.mesh
+                obstacle
             );
 
             obstacles.splice(
                 i,
                 1
             );
+
         }
+
     }
 
 
-    /* coins */
+    /*
+       Coins
+    */
 
     for(
-        let i=coinObjects.length-1;
+        let i=coinsObjects.length-1;
         i>=0;
         i--
     ){
 
-        const c =
-            coinObjects[i];
+        const coin =
+            coinsObjects[i];
 
+        coin.position.z +=
+            speed * delta * 2.5;
 
-        c.position.z +=
-            speed * 55 * dt;
+        coin.rotation.x +=
+            .05 * delta;
 
-
-        c.rotation.y +=
-            dt * 5;
-
-
-        const dx =
-            Math.abs(
-                c.position.x -
-                player.position.x
-            );
-
-        const dy =
-            Math.abs(
-                c.position.y -
-                (player.position.y+1)
-            );
-
-        const dz =
-            Math.abs(
-                c.position.z -
-                player.position.z
-            );
+        coin.rotation.y +=
+            .08 * delta;
 
 
         if(
-            dx < .9 &&
-            dy < 1 &&
-            dz < 1.2
+            Math.abs(
+                coin.position.z -
+                player.position.z
+            ) < 1.2 &&
+            Math.abs(
+                coin.position.x -
+                player.position.x
+            ) < 1.2 &&
+            Math.abs(
+                coin.position.y -
+                (player.position.y + 1)
+            ) < 1.2
         ){
 
-            coins++;
+            coinCount += 1;
 
-            score += 25;
+            scene.remove(
+                coin
+            );
 
-            scene.remove(c);
-
-            coinObjects.splice(
+            coinsObjects.splice(
                 i,
                 1
             );
 
-            continue;
         }
 
 
-        if(c.position.z > 15){
+        if(
+            coin.position.z > 15
+        ){
 
-            scene.remove(c);
+            scene.remove(
+                coin
+            );
 
-            coinObjects.splice(
+            coinsObjects.splice(
                 i,
                 1
             );
+
         }
+
     }
 
 
-    /* particles */
-
-    particles.forEach(
-        function(p){
-
-            p.position.z +=
-                speed *
-                35 *
-                dt *
-                p.userData.speed;
-
-
-            if(p.position.z > 5){
-
-                p.position.z =
-                    -150;
-
-                p.position.x =
-                    THREE.MathUtils.randFloat(
-                        -7,
-                        7
-                    );
-            }
-        }
-    );
-
-
-    /* camera */
+    /*
+       Camera
+    */
 
     camera.position.x +=
         (
-            player.position.x*.22 -
+            player.position.x * .25 -
             camera.position.x
-        ) * 5 * dt;
-
+        ) * .08 * delta;
 
     camera.position.y +=
         (
             4.2 +
             player.position.y*.25 -
             camera.position.y
-        ) * 5 * dt;
+        ) * .08 * delta;
 
 
     camera.lookAt(
         player.position.x,
-        1.2,
-        -12
+        1.1,
+        -5
     );
 
 
-    updateHUD();
-}
+    /*
+       Animate loaded model
+    */
 
+    if(window.shadowMixer){
 
-/* =====================================================
-   HUD
-===================================================== */
-
-function updateHUD(){
-
-    document
-        .getElementById("score")
-        .textContent =
-            Math.floor(score);
-
-
-    document
-        .getElementById("coins")
-        .textContent =
-            coins;
-
-
-    document
-        .getElementById("speed")
-        .textContent =
-            speed.toFixed(1);
-
-
-    document
-        .getElementById("best")
-        .textContent =
-            best;
-}
-
-
-/* =====================================================
-   MOBILE-SAFE BUTTON HANDLER
-===================================================== */
-
-function mobileButton(
-    element,
-    action
-){
-
-    let touched = false;
-
-
-    element.addEventListener(
-        "touchstart",
-        function(e){
-
-            e.preventDefault();
-
-            touched = true;
-
-            action();
-
-        },
-        {passive:false}
-    );
-
-
-    element.addEventListener(
-        "click",
-        function(e){
-
-            e.preventDefault();
-
-            if(touched){
-
-                touched = false;
-
-                return;
-            }
-
-            action();
-
-        }
-    );
-}
-
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-
-mobileButton(
-    document.getElementById("startBtn"),
-    startGame
-);
-
-
-mobileButton(
-    document.getElementById("restartBtn"),
-    startGame
-);
-
-
-mobileButton(
-    document.getElementById("leftBtn"),
-    moveLeft
-);
-
-
-mobileButton(
-    document.getElementById("rightBtn"),
-    moveRight
-);
-
-
-mobileButton(
-    document.getElementById("jumpBtn"),
-    jump
-);
-
-
-mobileButton(
-    document.getElementById("slideBtn"),
-    slide
-);
-
-
-/* =====================================================
-   KEYBOARD
-===================================================== */
-
-window.addEventListener(
-    "keydown",
-    function(e){
-
-        if(
-            e.key === "ArrowLeft" ||
-            e.key.toLowerCase() === "a"
-        ){
-
-            moveLeft();
-        }
-
-
-        if(
-            e.key === "ArrowRight" ||
-            e.key.toLowerCase() === "d"
-        ){
-
-            moveRight();
-        }
-
-
-        if(
-            e.key === "ArrowUp" ||
-            e.key === " "
-        ){
-
-            jump();
-        }
-
-
-        if(
-            e.key === "ArrowDown" ||
-            e.key.toLowerCase() === "s"
-        ){
-
-            slide();
-        }
-
-    }
-);
-
-
-/* =====================================================
-   SWIPE CONTROLS
-===================================================== */
-
-let touchStartX = 0;
-let touchStartY = 0;
-
-
-window.addEventListener(
-    "touchstart",
-    function(e){
-
-        if(!e.touches.length) return;
-
-        touchStartX =
-            e.touches[0].clientX;
-
-        touchStartY =
-            e.touches[0].clientY;
-
-    },
-    {passive:true}
-);
-
-
-window.addEventListener(
-    "touchend",
-    function(e){
-
-        if(!e.changedTouches.length) return;
-
-        const x =
-            e.changedTouches[0].clientX;
-
-        const y =
-            e.changedTouches[0].clientY;
-
-
-        const dx =
-            x - touchStartX;
-
-        const dy =
-            y - touchStartY;
-
-
-        const threshold = 45;
-
-
-        if(
-            Math.abs(dx) >
-            Math.abs(dy)
-        ){
-
-            if(dx > threshold){
-
-                moveRight();
-
-            }else if(
-                dx < -threshold
-            ){
-
-                moveLeft();
-            }
-
-        }else{
-
-            if(
-                dy < -threshold
-            ){
-
-                jump();
-
-            }else if(
-                dy > threshold
-            ){
-
-                slide();
-            }
-        }
-
-    },
-    {passive:true}
-);
-
-
-/* =====================================================
-   RESIZE
-===================================================== */
-
-window.addEventListener(
-    "resize",
-    function(){
-
-        if(!camera || !renderer) return;
-
-        camera.aspect =
-            window.innerWidth /
-            window.innerHeight;
-
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
-    }
-);
-
-
-/* =====================================================
-   MAIN LOOP
-===================================================== */
-
-function animate(){
-
-    requestAnimationFrame(
-        animate
-    );
-
-
-    const dt =
-        Math.min(
-            clock.getDelta(),
-            .05
+        window.shadowMixer.update(
+            .016 * delta
         );
 
+    }
 
-    updateGame(dt);
+
+    /*
+       HUD
+    */
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        score;
+
+    document.getElementById(
+        "coins"
+    ).textContent =
+        coinCount;
+
+    document.getElementById(
+        "speed"
+    ).textContent =
+        Math.floor(
+            speed * 100
+        );
+
+    document.getElementById(
+        "best"
+    ).textContent =
+        getBest();
 
 
     renderer.render(
         scene,
         camera
     );
+
 }
 
 
-/* =====================================================
-   START ENGINE
-===================================================== */
+/* ==========================================
+   GAME OVER
+========================================== */
 
-try{
+function endGame(){
 
-    initThree();
+    gameOver = true;
 
-    animate();
+    saveBest();
 
-}catch(error){
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        score;
 
-    console.error(
-        "Shadow Rush failed to start:",
-        error
+    document.getElementById(
+        "finalCoins"
+    ).textContent =
+        coinCount;
+
+    document.getElementById(
+        "gameOver"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* ==========================================
+   RESTART
+========================================== */
+
+window.restartShadowRush =
+function(){
+
+    /*
+       Remove obstacles.
+    */
+
+    for(
+        const obstacle of obstacles
+    ){
+
+        scene.remove(
+            obstacle
+        );
+
+    }
+
+    obstacles = [];
+
+
+    /*
+       Remove coins.
+    */
+
+    for(
+        const coin of coinsObjects
+    ){
+
+        scene.remove(
+            coin
+        );
+
+    }
+
+    coinsObjects = [];
+
+
+    currentLane = 1;
+
+    player.position.set(
+        0,
+        0,
+        3
     );
 
-    loadingText.textContent =
-        "PLEASE RELOAD";
+    jumping = false;
 
-    loadingProgress.style.width =
-        "100%";
+    sliding = false;
+
+    verticalVelocity = 0;
+
+    score = 0;
+
+    coinCount = 0;
+
+    speed = .38;
+
+    distance = 0;
+
+    spawnTimer = 0;
+
+    coinTimer = 0;
+
+    gameOver = false;
+
+    document.getElementById(
+        "gameOver"
+    ).style.display =
+        "none";
+
+};
+
+
+/* ==========================================
+   BEST SCORE
+========================================== */
+
+function getBest(){
+
+    return Number(
+        localStorage.getItem(
+            "shadowRushBest"
+        ) || 0
+    );
+
+}
+
+
+function saveBest(){
+
+    if(
+        score > getBest()
+    ){
+
+        localStorage.setItem(
+            "shadowRushBest",
+            score
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   RESIZE
+========================================== */
+
+function onResize(){
+
+    if(!camera || !renderer)
+        return;
+
+    camera.aspect =
+        window.innerWidth /
+        window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
 }
 
 </script>
